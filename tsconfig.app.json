@@ -23,8 +23,7 @@
     "paths": {
       "@/*": ["src/*"]
     }, // import時のパスをsrc起点の相対パスにする。 @で始まるパスが相対パスになる
-    "jsxImportSource": "@emotion/react",
-    "noUncheckedSideEffectImports": true
+    "jsxImportSource": "@emotion/react"
   },
   "include": ["src"]
 }

@@ -1,40 +1,32 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
 import CssBaseline from "@mui/material/CssBaseline";
-import Button from "@mui/material/Button";
-import ThumbUp from "@mui/icons-material/ThumbUp";
+import { Routes, Route } from "react-router-dom";
+import { PATHS } from "@/constants/routes";
+import { Login } from "@/pages/Login";
+import { createTheme } from "@/theme";
+import { ThemeProvider } from "@mui/material/styles";
+import { NotFound } from "@/pages/404";
+import { Device } from "@/pages/Device";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const theme = createTheme();
 
   return (
     <>
-      <CssBaseline />
-      <Button variant="outlined" startIcon={<ThumbUp />}>
-        OK
-      </Button>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Routes>
+          <Route path={PATHS.signIn} element={<Login />} />
+          <Route
+            path={PATHS.device}
+            element={
+              //<RequireAuth roles={AdminsRoles}>
+                <Device />
+              //</RequireAuth>
+            }
+          />
+          <Route path={PATHS.notFound} element={<NotFound />} />
+        </Routes>
+      </ThemeProvider>
     </>
   );
 }

@@ -1,0 +1,7 @@
+.LoaderWrapper {
+  align-items: center;
+  display: flex;
+  height: 60vh;
+  justify-content: center;
+  width: 100%;
+}
