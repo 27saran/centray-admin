@@ -30,16 +30,6 @@ npm run build
 yarn build
 ```
 
-### Storybook 起動
-
-```bash
-npm run storybook
-または
-yarn storybook
-```
-
-Storybookは `http://localhost:6006` で起動
-
 ### Lint
 
 ```bash
@@ -98,22 +88,29 @@ yarn secretlint
 
 ```
 .
-├── .next/           # ビルド成果物(自動生成)
-├── .storybook/      # Storybookの設定ファイル
-├── node_modules/    # 依存ライブラリ(自動生成)
-├── public/          # 静的ファイル(画像、フォントなど)
-├── src/             # アプリケーションソースコード
-│   ├── app/         # Next.js App Router (ページ、レイアウト)
-│   ├── components/  # UIコンポーネント
-│   │   └── ui/      # shadcn/uiで生成されたコンポーネント
-│   ├── lib/         # ユーティリティ関数など
-│   └── stories/     # Storybookのストーリーファイル
-├── components.json  # shadcn/uiの設定ファイル
-├── next.config.ts   # Next.jsの設定ファイル
-├── package.json     # プロジェクト情報、依存関係、スクリプト
-├── postcss.config.* # PostCSSの設定ファイル
-├── tailwind.config.ts # TailwindCSSの設定ファイル
-├── tsconfig.json    # TypeScriptの設定ファイル
-├── eslint.config.mjs # ESLintの設定ファイル
-├── .prettierrc.json # Prettierの設定ファイル
+├── .next/                           # ビルド成果物(自動生成)
+├── .storybook/                      # Storybookの設定ファイル
+├── node_modules/                    # 依存ライブラリ(自動生成)
+├── public/                          # 静的ファイル(画像、フォントなど)
+├── src/                             # アプリケーションソースコード
+│   ├── app/                         # Next.js App Router (ページ、レイアウト 主にサーバーコンポーネント)
+│   ├── components/                  # UIコンポーネント
+│   │   ├── login/        　　　　　　 # ログイン関連クライアントコンポーネント
+│   │   ├── device-group/  　　　　　　# 端末グループ関連クライアントコンポーネント
+│   │   ├── session-management-ver1/ # セッション管理v1関連クライアントコンポーネント
+│   │   ├── session-management-ver2/ # セッション管理v2関連クライアントコンポーネント
+│   │   └── ui/       　　　　　　　   # shadcn/uiで生成されたコンポーネント（自動生成。基本いじらない）
+│   ├── data/                       # jsonのモックデータ
+│   ├── hooks/         　　　　　　　　# カスタムフック
+│   ├── lib/          　　　　　　　　 # ユーティリティ関数など
+│   ├── stories/       　　　　　　　　# Storybookのストーリーファイル
+│   └── types/         　　　　　　　　# TypeScriptの型定義
+├── components.json  　　　　　　　　　# shadcn/uiの設定ファイル
+├── next.config.ts   　　　　　　　　　# Next.jsの設定ファイル
+├── package.json     　　　　　　　　　# プロジェクト情報、依存関係、スクリプト
+├── postcss.config.* 　　　　　　　　　# PostCSSの設定ファイル
+├── tailwind.config.ts 　　　　　　　　# TailwindCSSの設定ファイル
+├── tsconfig.json    　　　　　　　　　# TypeScriptの設定ファイル
+├── eslint.config.mjs               # ESLintの設定ファイル
+├── .prettierrc.json                # Prettierの設定ファイル
 ```
