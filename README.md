@@ -77,7 +77,6 @@ yarn secretlint
 - **Tailwind CSS**: CSSフレームワーク
 - **shadcn/ui**: RadixUIとTailwindCSSをベースにした再利用可能なUIコンポーネント群
 - **Lucide React**: アイコンライブラリ
-- **Storybook**: UIコンポーネントの開発、テスト、ドキュメンテーションツール
 - **React Hook Form**: フォーム管理ライブラリ
 - **Zod**: バリデーションライブラリ
 - **ESLint**: コードの静的解析ツール (品質維持、バグ発見)
@@ -86,20 +85,29 @@ yarn secretlint
 
 ## フォルダ構成
 
+app配下のコンポーネントは基本的にサーバーコンポーネントにする。
+
+hookなどのクライアントコンポーネントはcomponents配下に置いてサーバーコンポーネントから呼び出すようにする
+
+page.tsx側でクライアントコンポーネントを使わない理由として、表示速度が速く、データ取得が楽で、セキュリティ的にも安全なので。（あとNext.jsがサーバーコンポーネントのページングを推奨してるから）
+
 ```
 .
 ├── .next/                           # ビルド成果物(自動生成)
-├── .storybook/                      # Storybookの設定ファイル
 ├── node_modules/                    # 依存ライブラリ(自動生成)
 ├── public/                          # 静的ファイル(画像、フォントなど)
 ├── src/                             # アプリケーションソースコード
-│   ├── app/                         # Next.js App Router (ページ、レイアウト 主にサーバーコンポーネント)
-│   ├── components/                  # UIコンポーネント
-│   │   ├── login/        　　　　　　 # ログイン関連クライアントコンポーネント
-│   │   ├── device-group/  　　　　　　# 端末グループ関連クライアントコンポーネント
-│   │   ├── session-management-ver1/ # セッション管理v1関連クライアントコンポーネント
-│   │   ├── session-management-ver2/ # セッション管理v2関連クライアントコンポーネント
-│   │   └── ui/       　　　　　　　   # shadcn/uiで生成されたコンポーネント（自動生成。基本いじらない）
+│   ├── app/                         # Next.js App Router
+│   │   ├── page.tsx        　　　　 　# ログインのサーバーコンポーネント
+│   │   ├── device-group/  　　　　　　# 端末グループのサーバーコンポーネント
+│   │   ├── session-management-ver1/ # セッション管理v1のサーバーコンポーネント
+│   │   ├── session-management-ver2/ # セッション管理v2のサーバーコンポーネント
+├── components/                      # UIコンポーネント
+│   ├── login/            　　　　　　 # ログイン関連クライアントコンポーネント
+│   ├── device-group/  　    　　　　　# 端末グループ関連クライアントコンポーネント
+│   ├── session-management-ver1/     # セッション管理v1関連クライアントコンポーネント
+│   ├── session-management-ver2/     # セッション管理v2関連クライアントコンポーネント
+│   └── ui/       　　　　　　　       # shadcn/uiで生成されたコンポーネント（自動生成。基本いじらない）
 │   ├── data/                       # jsonのモックデータ
 │   ├── hooks/         　　　　　　　　# カスタムフック
 │   ├── lib/          　　　　　　　　 # ユーティリティ関数など
