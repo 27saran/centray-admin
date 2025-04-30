@@ -17,7 +17,7 @@ async function loadData(): Promise<SessionManagementData> {
 export default async function MatchingPage() {
   const data = await loadData();
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center min-h-screen">
       <MatchingClient initialGroupName={data.initialGroupName} DeviceSource={data.DeviceSource} />
     </div>
   );

@@ -34,7 +34,7 @@ export function SessionManagementClient({ groupNames }: SessionManagementProps) 
         </h3>
         <div className="flex justify-center">
           <Select value={selectedGroup} onValueChange={setSelectedGroup}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-1/2">
               <SelectValue placeholder="グループ名" />
             </SelectTrigger>
             <SelectContent>
@@ -47,7 +47,7 @@ export function SessionManagementClient({ groupNames }: SessionManagementProps) 
           </Select>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-center gap-4 pt-4">
+      <CardFooter className="flex justify-center pt-2">
         <Button onClick={handleMatchMaking} disabled={!selectedGroup}>
           マッチング開始
         </Button>

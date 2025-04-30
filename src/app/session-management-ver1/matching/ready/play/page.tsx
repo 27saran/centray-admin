@@ -18,7 +18,7 @@ export default async function PlayPage() {
   const data = await loadData();
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center min-h-screen">
       <PlayClient DeviceSource={data.DeviceSource} phaseSequence={data.phaseSequence} />
     </div>
   );

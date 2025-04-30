@@ -55,7 +55,7 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card>
       <CardHeader>
         <CardTitle>グループ編集</CardTitle>
         <CardDescription>{groupName}</CardDescription>
@@ -75,7 +75,7 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">所属している端末はありません。</p>
+            <p className="text-sm text-muted-foreground">所属している端末はありません</p>
           )}
         </div>
 
@@ -93,7 +93,7 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">追加できる端末はありません。</p>
+            <p className="text-sm text-muted-foreground">追加できる端末はありません</p>
           )}
         </div>
       </CardContent>

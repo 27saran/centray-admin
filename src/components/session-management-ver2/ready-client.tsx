@@ -29,14 +29,14 @@ function ReadyContent({ DeviceSource }: ReadyClientProps) {
   const devicesToShow = DeviceSource.slice(0, isNaN(matchedCount) ? DeviceSource.length : matchedCount);
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full">
       <CardHeader className="text-center">
         <CardTitle>参加準備完了</CardTitle>
         <CardDescription className="pt-2">
           {groupName}の端末が揃いました ({matchedCountStr}台)
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center pt-4">
+      <CardContent className="flex flex-col items-center">
         <p className="text-lg font-semibold mb-4">参加端末一覧</p>
         <div className="w-full h-60 overflow-y-auto border rounded-md p-2">
           {devicesToShow.length > 0 ? (
@@ -49,7 +49,7 @@ function ReadyContent({ DeviceSource }: ReadyClientProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground text-center pt-4">参加端末はありません。</p>
+            <p className="text-sm text-muted-foreground text-center pt-4">参加端末はありません</p>
           )}
         </div>
       </CardContent>

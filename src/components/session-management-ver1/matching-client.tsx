@@ -71,11 +71,11 @@ function MatchingContent({ initialGroupName, DeviceSource }: MatchingClientProps
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardContent className="flex flex-col items-center pt-8">
+    <Card className="w-full">
+      <CardContent className="flex flex-col items-center pt-2">
         <p className="text-lg font-semibold mb-2">{isMatchingComplete ? 'マッチング完了' : 'マッチング中...'}</p>
-        <p className="text-sm text-muted-foreground mb-4">{groupName}</p>
-        <p className="text-4xl font-bold mb-8">
+        <p className="text-sm text-muted-foreground mb-2">{groupName}</p>
+        <p className="text-4xl font-bold mb-4">
           {current} / {total}
         </p>
         <div className="w-full h-60 overflow-y-auto border rounded-md p-2">
@@ -103,12 +103,8 @@ function MatchingContent({ initialGroupName, DeviceSource }: MatchingClientProps
 
 export function MatchingClient({ initialGroupName, DeviceSource }: MatchingClientProps) {
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <Suspense fallback={<div>参加情報読み込み中...</div>}>
       <MatchingContent initialGroupName={initialGroupName} DeviceSource={DeviceSource} />
     </Suspense>
   );
-}
-
-function LoadingFallback() {
-  return <div className="flex justify-center items-center min-h-screen">マッチング情報読み込み中...</div>;
 }

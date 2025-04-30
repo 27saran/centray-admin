@@ -33,7 +33,7 @@ export function DeviceGroupClient({ initialGroups }: DeviceGroupClientProps) {
 
   return (
     <>
-      <div className="flex justify-end mb-8">
+      <div className="flex justify-end">
         <Button onClick={addGroup}>グループ追加</Button>
       </div>
       {deviceGroupData.map((group) => (
@@ -41,7 +41,7 @@ export function DeviceGroupClient({ initialGroups }: DeviceGroupClientProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{group.groupName}</TableHead>
+                <TableHead className="py-4">{group.groupName}</TableHead>
                 <TableHead className="text-right">
                   <Button onClick={() => handleEditClick(group.id)}>編集</Button>
                 </TableHead>
@@ -50,7 +50,7 @@ export function DeviceGroupClient({ initialGroups }: DeviceGroupClientProps) {
             <TableBody>
               {group.assignedDevices.length === 0 ? (
                 <TableRow>
-                  <TableCell>登録端末はありません</TableCell>
+                  <TableCell className="text-muted-foreground">登録端末はありません</TableCell>
                 </TableRow>
               ) : (
                 group.assignedDevices.map((device) => (

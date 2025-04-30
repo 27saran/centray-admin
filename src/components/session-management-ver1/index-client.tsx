@@ -32,16 +32,16 @@ export function SessionManagementClient({ groupNames, matchCountOptions }: Sessi
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardContent className="pt-6">
-        <h3 className="font-bold mb-4 text-center">
+    <Card className="w-full">
+      <CardContent>
+        <h3 className="font-bold mb-2 text-center">
           利用する端末グループを
           <br />
           選択してください
         </h3>
         <div className="flex justify-center">
           <Select value={selectedGroup} onValueChange={setSelectedGroup}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-1/2">
               <SelectValue placeholder="グループ名" />
             </SelectTrigger>
             <SelectContent>
@@ -54,14 +54,14 @@ export function SessionManagementClient({ groupNames, matchCountOptions }: Sessi
           </Select>
         </div>
 
-        <h3 className="font-bold mt-8 mb-4 text-center">
+        <h3 className="font-bold mt-8 mb-2 text-center">
           グループに参加する人数を
           <br />
           設定してください
         </h3>
         <div className="flex justify-center">
           <Select value={selectedNumber} onValueChange={setSelectedNumber}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-1/2">
               <SelectValue placeholder="人数" />
             </SelectTrigger>
             <SelectContent>
@@ -74,7 +74,7 @@ export function SessionManagementClient({ groupNames, matchCountOptions }: Sessi
           </Select>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-center gap-4 pt-4">
+      <CardFooter className="flex justify-center pt-2">
         <Button onClick={handleMatchMaking} disabled={!selectedGroup || !selectedNumber}>
           マッチング開始
         </Button>

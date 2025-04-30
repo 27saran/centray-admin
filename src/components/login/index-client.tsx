@@ -41,22 +41,22 @@ export function LoginClient() {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1 text-center">
+      <CardHeader className="text-center">
         <CardTitle className="text-3xl font-extrabold">Centray管理画面</CardTitle>
       </CardHeader>
 
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email address</FormLabel>
+                  <FormLabel>メールアドレス</FormLabel>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FaEnvelope className="h-4 w-4 text-gray-400" />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                      <FaEnvelope className="text-gray-400" />
                     </div>
                     <FormControl>
                       <Input placeholder="you@example.com" className="pl-10" type="email" {...field} />
@@ -74,8 +74,8 @@ export function LoginClient() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FaLock className="h-4 w-4 text-gray-400" />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                      <FaLock className="text-gray-400" />
                     </div>
                     <FormControl>
                       <Input type="password" placeholder="••••••••" className="pl-10" {...field} />

@@ -18,7 +18,7 @@ export default async function DeviceGroupPage() {
   const data = await loadData();
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="py-8">
       <DeviceGroupClient initialGroups={data.groups} />
     </div>
   );

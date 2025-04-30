@@ -45,20 +45,22 @@ function PlayContent({ DeviceSource, phaseSequence }: PlayClientProps) {
         router.push('/session-management-ver2');
       }, 1500);
       return () => clearTimeout(timer);
+    } else {
+      return undefined
     }
   }, [isSessionComplete, router]);
 
   const currentPhaseData = phaseSequence?.[currentPhaseIndex];
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardContent className="flex flex-col items-center pt-8">
+    <Card className="w-full">
+      <CardContent className="flex flex-col items-center">
         <p className="text-lg font-semibold mb-2 text-center">
           セッション参加中の
           <br />
           端末一覧
         </p>
-        <p className="text-sm text-muted-foreground mb-4">グループ: {groupName}</p>
+        <p className="text-sm text-muted-foreground mb-4">{groupName}</p>
         <div className="w-full h-60 overflow-y-auto border rounded-md p-2 mb-6">
           <ul>
             {DeviceSource.map((device, index) => (
@@ -69,11 +71,11 @@ function PlayContent({ DeviceSource, phaseSequence }: PlayClientProps) {
             ))}
           </ul>
         </div>
-        <Separator className="my-4" />
-        <div className="w-full text-center">
-          <h4 className="text-md font-semibold mb-2">進行状況</h4>
-          <p className="text-sm text-muted-foreground">{currentPhaseData?.phase ?? '読み込み中...'}</p>
-          {isSessionComplete && <p className="text-sm font-bold text-blue-600 mt-2">セッション完了</p>}
+        <Separator className="mt-2 mb-4" />
+        <div className="text-center">
+          <h4 className="text-md font-semibold">進行状況</h4>
+          <p className="font-bold text-gray-600 my-2">{currentPhaseData?.phase ?? '読込み中...'}</p>
+          {isSessionComplete && <p className="text-sm font-bold text-sky-600">セッション完了</p>}
         </div>
       </CardContent>
     </Card>

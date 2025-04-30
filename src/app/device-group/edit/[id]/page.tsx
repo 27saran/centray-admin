@@ -27,7 +27,7 @@ export default async function EditDeviceGroupByIdPage({ params }: { params: { id
     notFound();
   }
   return (
-    <div className="container mx-auto py-8">
+    <div className="py-8">
       <EditDeviceGroupForm initialData={groupDetails} />
     </div>
   );
