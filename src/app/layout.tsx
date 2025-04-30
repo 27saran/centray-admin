@@ -1,3 +1,4 @@
+// ページ全体のレイアウト（ルートレイアウト）
 'use client';
 
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -6,6 +7,7 @@ import './globals.css';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 
+// フォント設定
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -27,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* ログイン画面ならサイドバーは非表示 */}
         {isHomePage ? (
           <main>{children}</main>
         ) : (

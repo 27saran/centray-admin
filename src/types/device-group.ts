@@ -1,11 +1,15 @@
-export type Device = {
+export type DeviceData = {
   id: number;
   name: string;
 };
 
-export type GroupDetails = {
-  id: string;
+export type GroupDetailData = {
+  id: number;
   groupName: string;
-  assignedDevices: Device[];
-  availableDevices: Device[];
+  assignedDevices: DeviceData[];
+  availableDevices: DeviceData[];
+};
+
+export type DeviceGroupJsonData = {
+  groups: GroupDetailData[];
 };
