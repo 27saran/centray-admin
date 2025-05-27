@@ -1,4 +1,4 @@
-import { MatchingClient } from '@/components/session-management-ver2/matching-client';
+import { SessionManagementClient } from '@/components/session-management/index-client';
 import fs from 'fs/promises';
 import path from 'path';
 import { SessionManagementData } from '@/types/session-management';
@@ -20,12 +20,12 @@ async function loadData(): Promise<SessionManagementData> {
   }
 }
 
-export default async function MatchingPage() {
+export default async function SessionManagementPage() {
   const data = await loadData();
 
   return (
     <div className="flex items-center min-h-screen">
-      <MatchingClient initialGroupName={data.initialGroupName} DeviceSource={data.DeviceSource} />
+      <SessionManagementClient groupNames={data.groupNames} />
     </div>
   );
 }

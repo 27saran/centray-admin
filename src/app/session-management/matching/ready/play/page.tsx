@@ -1,4 +1,4 @@
-import { PlayClient } from '@/components/session-management-ver2/play-client';
+import { PlayClient } from '@/components/session-management/play-client';
 import fs from 'fs/promises';
 import path from 'path';
 import { SessionManagementData } from '@/types/session-management';

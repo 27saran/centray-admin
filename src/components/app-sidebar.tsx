@@ -17,13 +17,8 @@ const items = [
     icon: Group,
   },
   {
-    title: 'セッション管理-ver1',
-    url: '/session-management-ver1',
-    icon: MonitorSpeaker,
-  },
-  {
-    title: 'セッション管理-ver2',
-    url: '/session-management-ver2',
+    title: 'セッション管理',
+    url: '/session-management',
     icon: MonitorSpeaker,
   },
   {

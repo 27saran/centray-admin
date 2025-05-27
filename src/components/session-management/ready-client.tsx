@@ -19,11 +19,11 @@ function ReadyContent({ DeviceSource }: ReadyClientProps) {
   const handleContentStart = () => {
     const params = new URLSearchParams();
     params.set('group', groupName);
-    router.push(`/session-management-ver2/matching/ready/play?${params.toString()}`);
+    router.push(`/session-management/matching/ready/play?${params.toString()}`);
   };
 
   const handleGoBackToSelection = () => {
-    router.push('/session-management-ver2');
+    router.push('/session-management');
   };
 
   const devicesToShow = DeviceSource.slice(0, isNaN(matchedCount) ? DeviceSource.length : matchedCount);

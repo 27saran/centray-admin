@@ -1,7 +1,7 @@
-import { ReadyClient } from '@/components/session-management-ver1/ready-client';
-import { SessionManagementData } from '@/types/session-management';
+import { ReadyClient } from '@/components/session-management/ready-client';
 import fs from 'fs/promises';
 import path from 'path';
+import { SessionManagementData } from '@/types/session-management';
 
 async function loadData(): Promise<SessionManagementData> {
   // TODO: ダミーデータ API呼ぶ予定
@@ -10,7 +10,13 @@ async function loadData(): Promise<SessionManagementData> {
     const jsonData = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(jsonData);
   } catch (error) {
-    return { groupNames: [], matchCountOptions: [], initialGroupName: 'エラー', DeviceSource: [], phaseSequence: [] };
+    return {
+      groupNames: [],
+      matchCountOptions: [],
+      initialGroupName: 'エラー',
+      DeviceSource: [],
+      phaseSequence: [],
+    };
   }
 }
 

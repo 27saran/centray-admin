@@ -21,7 +21,7 @@ export function SessionManagementClient({ groupNames }: SessionManagementProps) 
     }
     const params = new URLSearchParams();
     params.set('group', selectedGroup);
-    router.push(`/session-management-ver2/matching?${params.toString()}`);
+    router.push(`/session-management/matching?${params.toString()}`);
   };
 
   return (

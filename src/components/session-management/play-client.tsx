@@ -42,7 +42,7 @@ function PlayContent({ DeviceSource, phaseSequence }: PlayClientProps) {
   useEffect(() => {
     if (isSessionComplete) {
       const timer = setTimeout(() => {
-        router.push('/session-management-ver2');
+        router.push('/session-management');
       }, 1500);
       return () => clearTimeout(timer);
     } else {

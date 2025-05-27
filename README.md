@@ -100,13 +100,11 @@ page.tsx側でクライアントコンポーネントを使わない理由とし
 │   ├── app/                         # Next.js App Router
 │   │   ├── page.tsx        　　　　 　# ログインのサーバーコンポーネント
 │   │   ├── device-group/  　　　　　　# 端末グループのサーバーコンポーネント
-│   │   ├── session-management-ver1/ # セッション管理v1のサーバーコンポーネント
-│   │   ├── session-management-ver2/ # セッション管理v2のサーバーコンポーネント
+│   │   ├── session-management/      # セッション管理のサーバーコンポーネント
 ├── components/                      # UIコンポーネント
 │   ├── login/            　　　　　　 # ログイン関連クライアントコンポーネント
 │   ├── device-group/  　    　　　　　# 端末グループ関連クライアントコンポーネント
-│   ├── session-management-ver1/     # セッション管理v1関連クライアントコンポーネント
-│   ├── session-management-ver2/     # セッション管理v2関連クライアントコンポーネント
+│   ├── session-management/          # セッション管理v2関連クライアントコンポーネント
 │   └── ui/       　　　　　　　       # shadcn/uiで生成されたコンポーネント（自動生成。基本いじらない）
 │   ├── data/                       # jsonのモックデータ
 │   ├── hooks/         　　　　　　　　# カスタムフック

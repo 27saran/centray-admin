@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -13,72 +13,48 @@ type MatchingClientProps = {
 function MatchingContent({ initialGroupName, DeviceSource }: MatchingClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const totalQuery = searchParams.get('total');
   const groupNameQuery = searchParams.get('group');
-
-  const total = parseInt(totalQuery ?? '0');
   const groupName = groupNameQuery ?? initialGroupName;
-
-  const [current, setCurrent] = useState(0);
   const [devices, setDevices] = useState<string[]>([]);
-  const [isMatchingComplete, setIsMatchingComplete] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('マッチング待機中...');
 
   useEffect(() => {
-    if (isMatchingComplete || total <= 0) return;
-    if (current >= total) {
-      if (!isMatchingComplete) {
-        setIsMatchingComplete(true);
-      }
+    if (!Array.isArray(DeviceSource) || DeviceSource.length === 0) {
+      setStatusMessage('端末リストの読み込みエラー');
       return;
     }
 
-    const intervalId = setInterval(() => {
-      setCurrent((prevCurrent) => {
-        const nextCurrent = prevCurrent + 1;
-        if (nextCurrent >= total) {
-          setIsMatchingComplete(true);
-        }
-        return nextCurrent;
-      });
-
+    setStatusMessage('マッチング中...');
+    const deviceIntervalId = setInterval(() => {
       setDevices((prevDevices) => {
         const nextDeviceIndex = prevDevices.length % DeviceSource.length;
         const nextDevice = DeviceSource[nextDeviceIndex];
         if (typeof nextDevice === 'string') {
           return [...prevDevices, nextDevice];
         } else {
-          console.warn('端末名が取得できません');
           return prevDevices;
         }
       });
     }, 1000);
+
     return () => {
-      clearInterval(intervalId);
+      clearInterval(deviceIntervalId);
     };
-  }, [total, isMatchingComplete, DeviceSource]);
+  }, [DeviceSource]);
 
-  useEffect(() => {
-    if (isMatchingComplete) {
-      const params = new URLSearchParams();
-      params.set('group', groupName);
-      params.set('total', String(total));
-      router.push(`/session-management-ver1/matching/ready?${params.toString()}`);
-    }
-  }, [isMatchingComplete, router, groupName, total]);
-
-  const handleGoBack = () => {
-    router.back();
+  const handleCompleteAndNavigate = () => {
+    const params = new URLSearchParams();
+    params.set('group', groupName);
+    params.set('devicesCount', String(devices.length));
+    router.push(`/session-management/matching/ready?${params.toString()}`);
   };
 
   return (
     <Card className="w-full">
       <CardContent className="flex flex-col items-center pt-2">
-        <p className="text-lg font-semibold mb-2">{isMatchingComplete ? 'マッチング完了' : 'マッチング中...'}</p>
+        <p className="text-lg font-semibold mb-2">{statusMessage}</p>
         <p className="text-sm text-muted-foreground mb-2">{groupName}</p>
-        <p className="text-4xl font-bold mb-4">
-          {current} / {total}
-        </p>
-        <div className="w-full h-60 overflow-y-auto border rounded-md p-2">
+        <div className="w-full h-60 overflow-y-auto border rounded-md p-2 mb-8">
           {devices.length > 0 ? (
             <ul className="space-y-1">
               {devices.map((device, index) => (
@@ -88,15 +64,15 @@ function MatchingContent({ initialGroupName, DeviceSource }: MatchingClientProps
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground text-center pt-4">端末を待っています...</p>
+            <p className="text-sm text-muted-foreground text-center pt-4">端末接続待機中...</p>
           )}
         </div>
-        {!isMatchingComplete && (
-          <Button variant="outline" className="mt-8" onClick={handleGoBack}>
-            キャンセル
-          </Button>
-        )}
       </CardContent>
+      <CardFooter className="flex justify-center">
+        <Button onClick={handleCompleteAndNavigate}>
+          マッチング完了
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
