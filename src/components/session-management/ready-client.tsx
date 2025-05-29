@@ -16,16 +16,19 @@ function ReadyContent({ DeviceSource }: ReadyClientProps) {
   const matchedCountStr = searchParams.get('total') ?? '?';
   const matchedCount = parseInt(matchedCountStr, 10);
 
+  // TODO: hooks移動予定
   const handleContentStart = () => {
     const params = new URLSearchParams();
     params.set('group', groupName);
     router.push(`/session-management/matching/ready/play?${params.toString()}`);
   };
 
+  // TODO: hooks移動予定
   const handleGoBackToSelection = () => {
     router.push('/session-management');
   };
 
+  // TODO: hooks移動予定
   const devicesToShow = DeviceSource.slice(0, isNaN(matchedCount) ? DeviceSource.length : matchedCount);
 
   return (

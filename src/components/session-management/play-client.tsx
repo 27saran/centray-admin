@@ -18,6 +18,8 @@ function PlayContent({ DeviceSource, phaseSequence }: PlayClientProps) {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [isSessionComplete, setIsSessionComplete] = useState(false);
 
+  // TODO: hooks移動予定
+  // あくまでmock用に1秒ごとにフェーズ進行させてるだけのロジックのためここは本実装で完全に消滅すると思う
   useEffect(() => {
     if (!phaseSequence || phaseSequence.length === 0) {
       setIsSessionComplete(true);
@@ -39,6 +41,7 @@ function PlayContent({ DeviceSource, phaseSequence }: PlayClientProps) {
     };
   }, [isSessionComplete, phaseSequence]);
 
+  // TODO: hooks移動予定
   useEffect(() => {
     if (isSessionComplete) {
       const timer = setTimeout(() => {

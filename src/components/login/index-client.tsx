@@ -33,6 +33,7 @@ export function LoginClient() {
     },
   });
 
+  // TODO: hooks移動予定
   function onSubmit(values: FormValues) {
     // TODO: 認証処理は多分ここ
     console.log(values);

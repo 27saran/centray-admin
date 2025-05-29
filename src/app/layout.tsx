@@ -1,11 +1,8 @@
 // ページ全体のレイアウト（ルートレイアウト）
-'use client';
 
 import { Geist, Geist_Mono } from 'next/font/google';
-import { usePathname } from 'next/navigation';
 import './globals.css';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/app-sidebar';
+import { LayoutContent } from '@/components/layout';
 
 // フォント設定
 const geistSans = Geist({
@@ -23,24 +20,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const isHomePage = pathname === '/';
 
   return (
     <html lang="ja">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* ログイン画面ならサイドバーは非表示 */}
-        {isHomePage ? (
-          <main>{children}</main>
-        ) : (
-          <SidebarProvider>
-            <AppSidebar />
-            <main className="w-full">
-              <SidebarTrigger />
-              <div className="p-4">{children}</div>
-            </main>
-          </SidebarProvider>
-        )}
+        <LayoutContent>{children}</LayoutContent>
       </body>
     </html>
   );

@@ -18,6 +18,7 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
   const groupId = initialData.id;
 
   // 端末追加
+  // TODO: hooks移動予定
   const handleAddDevice = (deviceToAdd: DeviceData) => {
     setAvailableDevices(availableDevices.filter((device) => device.id !== deviceToAdd.id));
     setAssignedDevices([...assignedDevices, deviceToAdd]);
@@ -26,6 +27,7 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
   };
 
   // 端末削除
+  // TODO: hooks移動予定
   const handleRemoveDevice = (deviceToRemove: DeviceData) => {
     setAssignedDevices(assignedDevices.filter((device) => device.id !== deviceToRemove.id));
     setAvailableDevices([...availableDevices, deviceToRemove]);
@@ -34,6 +36,7 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
   };
 
   // グループ保存
+  // TODO: hooks移動予定
   const handleSaveChanges = () => {
     if (confirm(`グループ "${groupName}" を保存します\nよろしいですか？`)) {
       console.log(`Save group ${groupId}`);
@@ -42,6 +45,7 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
   };
 
   // グループ削除
+  // TODO: hooks移動予定
   const handleDeleteGroup = async () => {
     if (confirm(`グループ "${groupName}" を削除します\nよろしいですか？`)) {
       console.log(`Delete group ${groupId}`);
@@ -50,6 +54,7 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
   };
 
   // 戻るボタン
+  // TODO: 汎用性あるのでcommon系のhooksに移動予定
   const handleGoBack = () => {
     router.back();
   };

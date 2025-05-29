@@ -14,6 +14,7 @@ export function SessionManagementClient({ groupNames }: SessionManagementProps) 
   const router = useRouter();
   const [selectedGroup, setSelectedGroup] = useState<string>('');
 
+  // TODO: hooks移動予定
   const handleMatchMaking = () => {
     if (!selectedGroup) {
       alert('グループを選択してください。');

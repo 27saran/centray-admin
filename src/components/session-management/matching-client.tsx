@@ -18,6 +18,8 @@ function MatchingContent({ initialGroupName, DeviceSource }: MatchingClientProps
   const [devices, setDevices] = useState<string[]>([]);
   const [statusMessage, setStatusMessage] = useState('マッチング待機中...');
 
+  // TODO: hooks移動予定
+  // あくまでmock用に1秒ごとにマッチング進行させてるだけのロジックのためここは本実装で完全に消滅すると思う
   useEffect(() => {
     if (!Array.isArray(DeviceSource) || DeviceSource.length === 0) {
       setStatusMessage('端末リストの読み込みエラー');
@@ -43,9 +45,9 @@ function MatchingContent({ initialGroupName, DeviceSource }: MatchingClientProps
   }, [DeviceSource]);
 
   const handleCompleteAndNavigate = () => {
-    const params = new URLSearchParams();
+  const params = new URLSearchParams();
     params.set('group', groupName);
-    params.set('devicesCount', String(devices.length));
+    params.set('total', String(devices.length));
     router.push(`/session-management/matching/ready?${params.toString()}`);
   };
 
