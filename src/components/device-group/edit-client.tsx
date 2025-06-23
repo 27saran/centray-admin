@@ -1,69 +1,31 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
-import type { DeviceData, GroupDetailData } from '@/types/device-group';
+import { useDeviceGroupEdit } from '@/hooks/device-group/use-device-group-edit';
+import type { GroupDetailData, DeviceData } from '@/types/device-group';
 
-type EditDeviceGroupFormProps = {
-  initialData: GroupDetailData;
+type EditDeviceGroupClientProps = {
+  groupDetail: GroupDetailData;
+  unassignedDevices: DeviceData[];
 };
 
-export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
-  const router = useRouter();
-  const [groupName] = useState(initialData.groupName);
-  const [assignedDevices, setAssignedDevices] = useState<DeviceData[]>(initialData.assignedDevices);
-  const [availableDevices, setAvailableDevices] = useState<DeviceData[]>(initialData.availableDevices);
-  const groupId = initialData.id;
-
-  // 端末追加
-  // TODO: hooks移動予定
-  const handleAddDevice = (deviceToAdd: DeviceData) => {
-    setAvailableDevices(availableDevices.filter((device) => device.id !== deviceToAdd.id));
-    setAssignedDevices([...assignedDevices, deviceToAdd]);
-    console.log(`端末追加： ${deviceToAdd.id}`);
-    // TODO: API Call
-  };
-
-  // 端末削除
-  // TODO: hooks移動予定
-  const handleRemoveDevice = (deviceToRemove: DeviceData) => {
-    setAssignedDevices(assignedDevices.filter((device) => device.id !== deviceToRemove.id));
-    setAvailableDevices([...availableDevices, deviceToRemove]);
-    console.log(`端末削除： ${deviceToRemove.id}`);
-    // TODO: API Call
-  };
-
-  // グループ保存
-  // TODO: hooks移動予定
-  const handleSaveChanges = () => {
-    if (confirm(`グループ "${groupName}" を保存します\nよろしいですか？`)) {
-      console.log(`Save group ${groupId}`);
-      // TODO: API Call
-    }
-  };
-
-  // グループ削除
-  // TODO: hooks移動予定
-  const handleDeleteGroup = async () => {
-    if (confirm(`グループ "${groupName}" を削除します\nよろしいですか？`)) {
-      console.log(`Delete group ${groupId}`);
-      // TODO: API Call
-    }
-  };
-
-  // 戻るボタン
-  // TODO: 汎用性あるのでcommon系のhooksに移動予定
-  const handleGoBack = () => {
-    router.back();
-  };
+export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDeviceGroupClientProps) {
+  const {
+    assignedDevices,
+    unAssignedDevices,
+    handleAddDevice,
+    handleRemoveDevice,
+    handleSaveChanges,
+    handleDeleteGroup,
+    handleGoBack,
+  } = useDeviceGroupEdit({ groupDetail, unassignedDevices });
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>グループ編集</CardTitle>
-        <CardDescription>{groupName}</CardDescription>
+        <CardDescription>{groupDetail.name}</CardDescription>
       </CardHeader>
       <CardContent>
         <h3 className="font-bold mb-2">所属中の端末</h3>
@@ -71,8 +33,8 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
           {assignedDevices.length > 0 ? (
             <ul className="space-y-2">
               {assignedDevices.map((device) => (
-                <li key={device.id} className="flex items-center justify-between p-2 border rounded-md">
-                  <span>{device.name}</span>
+                <li key={`assigned-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
+                  <span>{device.device_name}</span>
                   <Button variant="outline" size="sm" onClick={() => handleRemoveDevice(device)}>
                     解除
                   </Button>
@@ -86,11 +48,11 @@ export function EditDeviceGroupForm({ initialData }: EditDeviceGroupFormProps) {
 
         <h3 className="font-bold mb-2">紐付け可能な端末</h3>
         <div className="h-60 overflow-y-auto border rounded-md p-2">
-          {availableDevices.length > 0 ? (
+          {unAssignedDevices.length > 0 ? (
             <ul className="space-y-2">
-              {availableDevices.map((device) => (
-                <li key={device.id} className="flex items-center justify-between p-2 border rounded-md">
-                  <span>{device.name}</span>
+              {unAssignedDevices.map((device) => (
+                <li key={`available-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
+                  <span>{device.device_name}</span>
                   <Button variant="outline" size="sm" onClick={() => handleAddDevice(device)}>
                     追加
                   </Button>

@@ -1,4 +1,4 @@
-import { LoginClient } from '@/components/login/index-client';
+import LoginClient from '@/components/login/index-client';
 
 export default function LoginPage() {
   return (

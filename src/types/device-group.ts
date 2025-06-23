@@ -1,13 +1,13 @@
 export type DeviceData = {
-  id: number;
-  name: string;
+  device_id: number;
+  device_name: string;
 };
 
 export type GroupDetailData = {
   id: number;
-  groupName: string;
-  assignedDevices: DeviceData[];
-  availableDevices: DeviceData[];
+  name: string;
+  status: string;
+  devices: DeviceData[];
 };
 
 export type DeviceGroupJsonData = {
