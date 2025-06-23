@@ -21,6 +21,9 @@ export async function POST() {
     return Response.json({ success: true });
   } catch (error) {
     console.error('Logout error:', error);
-    return Response.json({ success: true });
+    return Response.json(
+      { success: false, error: error },
+      { status: 500 }
+    );
   }
 }

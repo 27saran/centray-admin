@@ -43,7 +43,14 @@ export function AppSidebar() {
                     <SidebarMenuButton asChild>
                       <button
                         type="button"
-                        onClick={() => logout()}
+                        onClick={async () => {
+                          const result = await logout();
+                          if (result.success) {
+                            window.location.href = '/';
+                          } else {
+                            alert(result.error || 'ログアウトに失敗しました');
+                          }
+                        }}
                         className="flex items-center gap-2 w-full"
                       >
                         <item.icon />
