@@ -1,72 +1,34 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { usePlay } from '@/hooks/session-management/use-play';
 
 type PlayClientProps = {
   DeviceSource: string[];
   phaseSequence: { phase: string }[];
 };
 
-function PlayContent({ DeviceSource, phaseSequence }: PlayClientProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const groupName = searchParams.get('group') ?? '不明なグループ';
-
-  const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
-  const [isSessionComplete, setIsSessionComplete] = useState(false);
-
-  // TODO: hooks移動予定
-  // あくまでmock用に1秒ごとにフェーズ進行させてるだけのロジックのためここは本実装で完全に消滅すると思う
-  useEffect(() => {
-    if (!phaseSequence || phaseSequence.length === 0) {
-      setIsSessionComplete(true);
-      return;
-    }
-    if (isSessionComplete) return;
-
-    const intervalId = setInterval(() => {
-      setCurrentPhaseIndex((prevIndex) => {
-        const nextIndex = (prevIndex + 1) % phaseSequence.length;
-        if (prevIndex === phaseSequence.length - 1) {
-          setIsSessionComplete(true);
-        }
-        return nextIndex;
-      });
-    }, 1000);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [isSessionComplete, phaseSequence]);
-
-  // TODO: hooks移動予定
-  useEffect(() => {
-    if (isSessionComplete) {
-      const timer = setTimeout(() => {
-        router.push('/session-management');
-      }, 1500);
-      return () => clearTimeout(timer);
-    } else {
-      return undefined
-    }
-  }, [isSessionComplete, router]);
-
-  const currentPhaseData = phaseSequence?.[currentPhaseIndex];
+export function PlayClient({ DeviceSource, phaseSequence }: PlayClientProps) {
+  const {
+    groupName,
+    currentPhaseData,
+    isSessionComplete,
+    handleSessionEnd,
+    DeviceSource: devices,
+  } = usePlay(DeviceSource, phaseSequence);
 
   return (
     <Card className="w-full">
       <CardContent className="flex flex-col items-center">
         <p className="text-lg font-semibold mb-2 text-center">
-          セッション参加中の
-          <br />
-          端末一覧
+          セッション参加中の<br />端末一覧
         </p>
         <p className="text-sm text-muted-foreground mb-4">{groupName}</p>
         <div className="w-full h-60 overflow-y-auto border rounded-md p-2 mb-6">
           <ul>
-            {DeviceSource.map((device, index) => (
+            {devices.map((device, index) => (
               <li key={index} className="flex items-center p-2 border-b last:border-b-0">
                 <span>{device}</span>
                 <span className="ml-auto text-sm text-green-600">正常</span>
@@ -80,15 +42,20 @@ function PlayContent({ DeviceSource, phaseSequence }: PlayClientProps) {
           <p className="font-bold text-gray-600 my-2">{currentPhaseData?.phase ?? '読込み中...'}</p>
           {isSessionComplete && <p className="text-sm font-bold text-sky-600">セッション完了</p>}
         </div>
+        {!isSessionComplete && (
+          <Button
+            className="mt-8 w-full bg-red-600 hover:bg-red-700"
+            onClick={handleSessionEnd}
+          >
+            セッション全体の緊急停止
+          </Button>
+        )}
+        {isSessionComplete && (
+          <Button className="mt-8 w-full" onClick={handleSessionEnd}>
+            セッション終了
+          </Button>
+        )}
       </CardContent>
     </Card>
-  );
-}
-
-export function PlayClient({ DeviceSource, phaseSequence }: PlayClientProps) {
-  return (
-    <Suspense fallback={<div>コンテンツ情報読み込み中...</div>}>
-      <PlayContent DeviceSource={DeviceSource} phaseSequence={phaseSequence} />
-    </Suspense>
   );
 }

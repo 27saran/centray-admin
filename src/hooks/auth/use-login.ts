@@ -45,7 +45,7 @@ export function useLogin() {
       if (result?.error) {
         setErrorMessage('ログインに失敗しました');
       } else if (result?.ok) {
-        router.push('/device-group');
+        router.push('/session-management');
       }
     } catch (error) {
       setErrorMessage('ログイン中にエラーが発生しました。');

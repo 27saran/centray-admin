@@ -16,6 +16,7 @@ async function loadData(): Promise<SessionManagementData> {
       initialGroupName: 'エラー',
       DeviceSource: [],
       phaseSequence: [],
+      sessions: [],
     };
   }
 }
@@ -24,8 +25,8 @@ export default async function SessionManagementPage() {
   const data = await loadData();
 
   return (
-    <div className="flex items-center min-h-screen">
-      <SessionManagementClient groupNames={data.groupNames} />
+    <div className="items-center">
+      <SessionManagementClient sessions={data.sessions} />
     </div>
   );
 }
