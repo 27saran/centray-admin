@@ -1,6 +1,6 @@
 export type DeviceData = {
   device_id: number;
-  device_name: string;
+  management_number: string;
 };
 
 export type GroupDetailData = {

@@ -34,7 +34,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
             <ul className="space-y-2">
               {assignedDevices.map((device) => (
                 <li key={`assigned-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
-                  <span>{device.device_name}</span>
+                  <span>{device.management_number}</span>
                   <Button variant="outline" size="sm" onClick={() => handleRemoveDevice(device)}>
                     解除
                   </Button>
@@ -52,7 +52,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
             <ul className="space-y-2">
               {unAssignedDevices.map((device) => (
                 <li key={`available-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
-                  <span>{device.device_name}</span>
+                  <span>{device.management_number}</span>
                   <Button variant="outline" size="sm" onClick={() => handleAddDevice(device)}>
                     追加
                   </Button>

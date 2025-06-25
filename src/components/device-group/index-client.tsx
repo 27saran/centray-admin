@@ -38,7 +38,7 @@ export function DeviceGroupClient({ deviceGroups }: DeviceGroupClientProps) {
               ) : (
                 group.devices.map((device) => (
                   <TableRow key={device.device_id}>
-                    <TableCell>{device.device_name}</TableCell>
+                    <TableCell>{device.management_number}</TableCell>
                   </TableRow>
                 ))
               )}
