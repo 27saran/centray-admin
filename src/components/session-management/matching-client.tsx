@@ -1,55 +1,21 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useMatching } from '@/hooks/session-management/use-matching';
 
 type MatchingClientProps = {
   initialGroupName: string;
   DeviceSource: string[];
 };
 
-function MatchingContent({ initialGroupName, DeviceSource }: MatchingClientProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const groupNameQuery = searchParams.get('group');
-  const groupName = groupNameQuery ?? initialGroupName;
-  const [devices, setDevices] = useState<string[]>([]);
-  const [statusMessage, setStatusMessage] = useState('マッチング待機中...');
-
-  // TODO: hooks移動予定
-  // あくまでmock用に1秒ごとにマッチング進行させてるだけのロジックのためここは本実装で完全に消滅すると思う
-  useEffect(() => {
-    if (!Array.isArray(DeviceSource) || DeviceSource.length === 0) {
-      setStatusMessage('端末リストの読み込みエラー');
-      return;
-    }
-
-    setStatusMessage('マッチング中...');
-    const deviceIntervalId = setInterval(() => {
-      setDevices((prevDevices) => {
-        const nextDeviceIndex = prevDevices.length % DeviceSource.length;
-        const nextDevice = DeviceSource[nextDeviceIndex];
-        if (typeof nextDevice === 'string') {
-          return [...prevDevices, nextDevice];
-        } else {
-          return prevDevices;
-        }
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(deviceIntervalId);
-    };
-  }, [DeviceSource]);
-
-  const handleCompleteAndNavigate = () => {
-  const params = new URLSearchParams();
-    params.set('group', groupName);
-    params.set('total', String(devices.length));
-    router.push(`/session-management/matching/ready?${params.toString()}`);
-  };
+export function MatchingClient({ initialGroupName, DeviceSource }: MatchingClientProps) {
+  const {
+    groupName,
+    devices,
+    statusMessage,
+    handleCompleteAndNavigate,
+  } = useMatching(initialGroupName, DeviceSource);
 
   return (
     <Card className="w-full">
@@ -72,17 +38,9 @@ function MatchingContent({ initialGroupName, DeviceSource }: MatchingClientProps
       </CardContent>
       <CardFooter className="flex justify-center">
         <Button onClick={handleCompleteAndNavigate}>
-          マッチング完了
+          セッション開始
         </Button>
       </CardFooter>
     </Card>
-  );
-}
-
-export function MatchingClient({ initialGroupName, DeviceSource }: MatchingClientProps) {
-  return (
-    <Suspense fallback={<div>参加情報読み込み中...</div>}>
-      <MatchingContent initialGroupName={initialGroupName} DeviceSource={DeviceSource} />
-    </Suspense>
   );
 }

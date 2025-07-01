@@ -1,58 +1,54 @@
 'use client';
 
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Plus, RectangleGoggles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import type { Session } from '@/types/session-management';
 
 type SessionManagementProps = {
-  groupNames: string[];
+  sessions: Session[];
 };
 
-export function SessionManagementClient({ groupNames }: SessionManagementProps) {
+export function SessionManagementClient({ sessions }: SessionManagementProps) {
   const router = useRouter();
-  const [selectedGroup, setSelectedGroup] = useState<string>('');
-
-  // TODO: hooks移動予定
-  const handleMatchMaking = () => {
-    if (!selectedGroup) {
-      alert('グループを選択してください。');
-      return;
-    }
-    const params = new URLSearchParams();
-    params.set('group', selectedGroup);
-    router.push(`/session-management/matching?${params.toString()}`);
-  };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardContent className="pt-6">
-        <h3 className="font-bold mb-4 text-center">
-          利用する端末グループを
-          <br />
-          選択してください
-        </h3>
-        <div className="flex justify-center">
-          <Select value={selectedGroup} onValueChange={setSelectedGroup}>
-            <SelectTrigger className="w-1/2">
-              <SelectValue placeholder="グループ名" />
-            </SelectTrigger>
-            <SelectContent>
-              {groupNames.map((group) => (
-                <SelectItem key={group} value={group}>
-                  {group}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-center pt-2">
-        <Button onClick={handleMatchMaking} disabled={!selectedGroup}>
-          マッチング開始
-        </Button>
-      </CardFooter>
-    </Card>
+    <>
+      <Card className="w-full max-w-md mx-auto">
+        <CardContent>
+          <CardHeader>
+            <h3 className="font-bold text-center">進行中のセッション</h3>
+          </CardHeader>
+          <div className="flex flex-col gap-4 h-80 overflow-y-auto">
+            {sessions.length === 0 ? (
+              <div className="text-gray-400 text-center py-8">進行中のセッションはありません</div>
+            ) : (
+              sessions.map((session) => (
+                <Card key={session.id} className="border">
+                  <CardContent>
+                    <div className="font-semibold">{session.time}</div>
+                    <div className="flex items-center mt-2">
+                      <span className="mr-2">
+                        <RectangleGoggles size={30} />
+                      </span>
+                      <span className="text-lg font-semibold">{session.groupName}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full max-w-md mx-auto mt-6" onClick={() => router.push('/session-management/lobby')}>
+        <CardContent>
+        <div className="flex flex-col items-center">
+            <Plus size={50} color="currentColor" />
+            <div className="font-bold text-lg mt-2 text-gray-800">新しいセッションを開始する</div>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { SessionManagementClient } from '@/components/session-management/index-client';
+import { LobbyClient } from '@/components/session-management/lobby-client';
 import fs from 'fs/promises';
 import path from 'path';
 import { SessionManagementData } from '@/types/session-management';
@@ -16,6 +16,7 @@ async function loadData(): Promise<SessionManagementData> {
       initialGroupName: 'エラー',
       DeviceSource: [],
       phaseSequence: [],
+      sessions: [],
     };
   }
 }
@@ -25,7 +26,7 @@ export default async function SessionManagementPage() {
 
   return (
     <div className="flex items-center min-h-screen">
-      <SessionManagementClient groupNames={data.groupNames} />
+      <LobbyClient groupNames={data.groupNames} />
     </div>
   );
 }

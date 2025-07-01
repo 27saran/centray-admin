@@ -1,4 +1,4 @@
-import { ReadyClient } from '@/components/session-management/ready-client';
+import { SessionManagementClient } from '@/components/session-management/index-client';
 import fs from 'fs/promises';
 import path from 'path';
 import { SessionManagementData } from '@/types/session-management';
@@ -16,16 +16,17 @@ async function loadData(): Promise<SessionManagementData> {
       initialGroupName: 'エラー',
       DeviceSource: [],
       phaseSequence: [],
+      sessions: [],
     };
   }
 }
 
-export default async function ReadyPage() {
+export default async function SessionManagementPage() {
   const data = await loadData();
 
   return (
-    <div className="flex items-center min-h-screen">
-      <ReadyClient DeviceSource={data.DeviceSource} />
+    <div className="items-center">
+      <SessionManagementClient sessions={data.sessions} />
     </div>
   );
 }

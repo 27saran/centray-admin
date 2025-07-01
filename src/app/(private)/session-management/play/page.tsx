@@ -16,6 +16,7 @@ async function loadData(): Promise<SessionManagementData> {
       initialGroupName: 'エラー',
       DeviceSource: [],
       phaseSequence: [],
+      sessions: [],
     };
   }
 }
