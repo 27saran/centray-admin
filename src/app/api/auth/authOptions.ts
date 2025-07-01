@@ -1,6 +1,7 @@
-import { NextAuthOptions } from 'next-auth';
+import { NextAuthOptions, User, Session } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getBaseApiUrl } from '@/lib/api';
+import { JWT } from 'next-auth/jwt';
 
 // NextAuthのログイン認証設定
 // https://next-auth.js.org/configuration/providers/credentials
@@ -51,15 +52,15 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = (user as any).accessToken;
-        token.id = user.id;
+        (token as JWT).accessToken = (user as User).accessToken;
+        (token as JWT).id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        (session.user as any).id = token.id as string;
-        (session as any).accessToken = token.accessToken;
+        (session.user as User).id = (token as JWT).id as string;
+        (session as Session).accessToken = (token as JWT).accessToken;
       }
       return session;
     },
