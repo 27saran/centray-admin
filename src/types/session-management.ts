@@ -1,14 +1,45 @@
-export type Session = {
+export type SessionResponse = {
   id: number;
-  time: string;
-  groupName: string;
+  name: string;
+  device_set_id: number;
+  status: number;
+  created_at: string;
 };
 
-export type SessionManagementData = {
-  groupNames: string[];
-  matchCountOptions: number[];
-  initialGroupName: string;
-  DeviceSource: string[];
-  phaseSequence: { phase: string }[];
-  sessions: Session[];
+export type ActiveMapping = {
+  SessionID: number;
+  GroupID: number;
+  AssignedAt: string;
+};
+
+export type SessionMappingsResponse = {
+  active_mappings: ActiveMapping[];
+};
+
+export type MatchingData = {
+  player_id: number;
+  device_id: number;
+  management_number: string;
+  group_id: number;
+  group_name: string;
+  is_anywhere: boolean;
+  join_time: string;
+};
+
+export type MatchingSSEEvent = {
+  queue: MatchingData[];
+  type: 'PLAYER_JOINED' | 'PLAYER_LEFT';
+};
+
+type SessionResult = {
+  GroupID: number;
+  PlayerCount: number;
+  MatchingStarted: boolean;
+  Error: string;
+};
+
+export type SessionResults = {
+  SessionID: number;
+  TicketID: number | null;
+  GroupResults: SessionResult[];
 };

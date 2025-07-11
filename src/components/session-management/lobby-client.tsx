@@ -4,18 +4,20 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useLobby } from '@/hooks/session-management/use-lobby';
+import type { GroupDetailData } from '@/types/device-group';
 
 type SessionManagementProps = {
-  groupNames: string[];
+  groups: GroupDetailData[];
 };
 
-export function LobbyClient({ groupNames }: SessionManagementProps) {
+export function LobbyClient({ groups }: SessionManagementProps) {
   const {
     selectedGroup,
     setSelectedGroup,
     handleMatchMaking,
+    loading,
     error,
-  } = useLobby(groupNames);
+  } = useLobby(groups);
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -31,9 +33,9 @@ export function LobbyClient({ groupNames }: SessionManagementProps) {
               <SelectValue placeholder="グループ名" />
             </SelectTrigger>
             <SelectContent>
-              {groupNames.map((group) => (
-                <SelectItem key={group} value={group}>
-                  {group}
+              {groups.map((group) => (
+                <SelectItem key={group.id} value={String(group.id)}>
+                  {group.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -44,8 +46,8 @@ export function LobbyClient({ groupNames }: SessionManagementProps) {
         )}
       </CardContent>
       <CardFooter className="flex justify-center pt-2">
-        <Button onClick={handleMatchMaking} disabled={!selectedGroup}>
-          マッチング開始
+        <Button onClick={handleMatchMaking} disabled={!selectedGroup || loading}>
+          {loading ? '処理中...' : 'マッチング受付開始'}
         </Button>
       </CardFooter>
     </Card>

@@ -1,7 +1,6 @@
 import { Group, MonitorSpeaker, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { logout } from '@/app/(private)/auth/fetch';
-
 import {
   Sidebar,
   SidebarContent,
@@ -10,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from '@/components/ui/sidebar';
 
 const items = [
@@ -31,6 +31,26 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { setOpen, setOpenMobile, isMobile } = useSidebar();
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    } else {
+      setOpen(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    if (!window.confirm('本当にログアウトしますか？')) return;
+    const result = await logout();
+    if (result.success) {
+      window.location.href = '/';
+    } else {
+      alert(result.error || 'ログアウトに失敗しました');
+    }
+  };
+
   return (
     <Sidebar side="right">
       <SidebarContent>
@@ -43,14 +63,7 @@ export function AppSidebar() {
                     <SidebarMenuButton asChild>
                       <button
                         type="button"
-                        onClick={async () => {
-                          const result = await logout();
-                          if (result.success) {
-                            window.location.href = '/';
-                          } else {
-                            alert(result.error || 'ログアウトに失敗しました');
-                          }
-                        }}
+                        onClick={handleLogout}
                         className="flex items-center gap-2 w-full"
                       >
                         <item.icon />
@@ -61,7 +74,7 @@ export function AppSidebar() {
                 ) : (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <Link href={item.url}>
+                      <Link href={item.url} onClick={handleLinkClick}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
