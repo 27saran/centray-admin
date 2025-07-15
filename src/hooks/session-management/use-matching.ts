@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { MatchingData, MatchingSSEEvent } from '@/types/session-management';
+import { MatchingDataResponse, MatchingSSEEventResponse } from '@/types/session-management';
 import { startMatching } from '@/app/(private)/session-management/matching/fetch';
+import { API_ENDPOINTS } from '@/constants/endpoints';
 
 export function useMatching(groupId?: number) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
-  const [data, setData] = useState<MatchingData[]>([]);
+  const [data, setData] = useState<MatchingDataResponse[]>([]);
   const [statusMessage, setStatusMessage] = useState('マッチング情報に接続中...');
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
 
@@ -28,7 +29,7 @@ export function useMatching(groupId?: number) {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
         if (!backendUrl) throw new Error('Backend URL is not defined');
 
-        const response = await fetch(`${backendUrl}/api/admin/sse?stream=matching`, {
+        const response = await fetch(`${backendUrl}${API_ENDPOINTS.ADMIN.SSE.MATCHING}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${session.accessToken}`,
@@ -50,7 +51,7 @@ export function useMatching(groupId?: number) {
               const data = line.slice(6);
               if (data.trim()) {
                 try {
-                  const parsed = JSON.parse(data) as MatchingSSEEvent;
+                  const parsed = JSON.parse(data) as MatchingSSEEventResponse;
                   if (parsed.type === 'PLAYER_JOINED') {
                     const filteredPlayers = parsed.queue.filter(player => player.group_id === groupId);
                     setData(filteredPlayers);
@@ -88,6 +89,7 @@ export function useMatching(groupId?: number) {
       if (groupId) params.set('group_id', String(groupId));
 
       const sessionId = searchParams.get('session_id');
+      if (sessionId) params.set('session_id', sessionId);
       if (sessionId && groupId) {
         const result = await startMatching(Number(sessionId), groupId);
 

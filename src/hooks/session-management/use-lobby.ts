@@ -1,10 +1,10 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { GroupDetailData } from '@/types/device-group';
+import type { GetAvailableGroupsResponse } from '@/types/session-management';
 import { createMatchmakingSession } from '@/app/(private)/session-management/lobby/fetch';
 import { formatDate } from '@/lib/format';
 
-export function useLobby(groups: GroupDetailData[]) {
+export function useLobby(groups: GetAvailableGroupsResponse[]) {
   const router = useRouter();
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +18,7 @@ export function useLobby(groups: GroupDetailData[]) {
     setError(null);
     setLoading(true);
 
-    const group = groups.find(g => String(g.id) === selectedGroup);
+    const group = groups.find(g => String(g.group_id) === selectedGroup);
     if (!group) {
       setError('グループ情報が見つかりません');
       setLoading(false);
@@ -26,7 +26,7 @@ export function useLobby(groups: GroupDetailData[]) {
     }
 
     const now = new Date().toISOString();
-    const sessionName = `${formatDate(now)} ${group.name}`;
+    const sessionName = `${formatDate(now)} ${group.group_name}`;
     // TODO: デバイスセットIDを動的に取得する
     const sessionRes = await createMatchmakingSession(sessionName, 1, Number(selectedGroup));
     if (!sessionRes.success || !sessionRes.data) {

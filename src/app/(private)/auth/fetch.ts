@@ -8,9 +8,10 @@
 
 'use client';
 import { signOut } from 'next-auth/react';
+import { API_ENDPOINTS } from '@/constants/endpoints';
 
 export async function logout(): Promise<{ success: boolean; error?: string }> {
-  const response = await fetch('/api/auth/logout', {
+  const response = await fetch(API_ENDPOINTS.AUTH.LOGOUT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

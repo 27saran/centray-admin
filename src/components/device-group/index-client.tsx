@@ -3,10 +3,10 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDeviceGroupList } from '@/hooks/device-group/use-device-group-index';
-import type { GroupDetailData } from '@/types/device-group';
+import type { GroupDetailResponse } from '@/types/device-group';
 
 type DeviceGroupClientProps = {
-  deviceGroups: GroupDetailData[];
+  deviceGroups: GroupDetailResponse[];
 };
 
 export function DeviceGroupClient({ deviceGroups }: DeviceGroupClientProps) {

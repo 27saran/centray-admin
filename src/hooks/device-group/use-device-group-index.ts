@@ -1,10 +1,10 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createDeviceGroup } from '@/app/(private)/device-group/fetch';
-import type { GroupDetailData } from '@/types/device-group';
+import type { GroupDetailResponse } from '@/types/device-group';
 
 type UseDeviceGroupListProps = {
-  deviceGroups: GroupDetailData[];
+  deviceGroups: GroupDetailResponse[];
 };
 
 export function useDeviceGroupList({ deviceGroups }: UseDeviceGroupListProps) {

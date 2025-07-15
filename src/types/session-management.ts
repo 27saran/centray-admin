@@ -1,3 +1,8 @@
+export type GetAvailableGroupsResponse = {
+  group_id: number;
+  group_name: string;
+}
+
 export type SessionResponse = {
   id: number;
   name: string;
@@ -7,16 +12,17 @@ export type SessionResponse = {
 };
 
 export type ActiveMapping = {
-  SessionID: number;
-  GroupID: number;
-  AssignedAt: string;
+  session_id: number;
+  group_id: number;
+  group_name: string;
+  assigned_at: string;
 };
 
 export type SessionMappingsResponse = {
   active_mappings: ActiveMapping[];
 };
 
-export type MatchingData = {
+export type MatchingDataResponse = {
   player_id: number;
   device_id: number;
   management_number: string;
@@ -26,8 +32,8 @@ export type MatchingData = {
   join_time: string;
 };
 
-export type MatchingSSEEvent = {
-  queue: MatchingData[];
+export type MatchingSSEEventResponse = {
+  queue: MatchingDataResponse[];
   type: 'PLAYER_JOINED' | 'PLAYER_LEFT';
 };
 
@@ -38,7 +44,7 @@ type SessionResult = {
   Error: string;
 };
 
-export type SessionResults = {
+export type SessionResultsResponse = {
   SessionID: number;
   TicketID: number | null;
   GroupResults: SessionResult[];

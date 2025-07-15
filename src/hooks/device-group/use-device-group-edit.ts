@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteGroup, assignDevicesToGroup } from '@/app/(private)/device-group/edit/[id]/fetch';
-import type { GroupDetailData, DeviceData } from '@/types/device-group';
+import type { GroupDetailResponse, DeviceData } from '@/types/device-group';
 
 type UseDeviceGroupEditProps = {
-  groupDetail: GroupDetailData;
+  groupDetail: GroupDetailResponse;
   unassignedDevices: DeviceData[];
 };
 

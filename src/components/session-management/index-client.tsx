@@ -26,14 +26,14 @@ export function SessionManagementClient({ sessions }: SessionManagementProps) {
               <div className="text-gray-400 text-center py-8">進行中のセッションはありません</div>
             ) : (
               sessionList.map((session) => (
-                <Card key={session.SessionID} className="border mb-1">
+                <Card key={session.session_id} className="border mb-1">
                   <CardContent>
-                    <div>{formatDate(session.AssignedAt)}</div>
+                    <div>{formatDate(session.assigned_at)}</div>
                     <div className="flex items-center mt-2">
                       <span className="mr-2">
                         <RectangleGoggles size={30} />
                       </span>
-                      <span className="text-lg font-semibold">{session.GroupID}</span>
+                      <span className="text-lg font-semibold">{session.group_name}</span>
                     </div>
                   </CardContent>
                 </Card>

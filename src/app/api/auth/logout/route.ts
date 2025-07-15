@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { getBaseApiUrl, createAuthHeaders } from '@/lib/api';
+import { API_ENDPOINTS } from '@/constants/endpoints';
 
 export async function POST() {
   try {
@@ -9,7 +10,7 @@ export async function POST() {
       'Cookie': cookieStore.toString(),
     };
 
-    const response = await fetch(getBaseApiUrl('/api/admin/logout'), {
+    const response = await fetch(getBaseApiUrl(API_ENDPOINTS.ADMIN.LOGOUT), {
       method: 'DELETE',
       headers,
     });

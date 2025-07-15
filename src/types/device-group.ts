@@ -3,13 +3,13 @@ export type DeviceData = {
   management_number: string;
 };
 
-export type GroupDetailData = {
+export type GroupDetailResponse = {
   id: number;
   name: string;
   status: string;
   devices: DeviceData[];
 };
 
-export type DeviceGroupJsonData = {
-  groups: GroupDetailData[];
+export type DeviceGroupListResponse = {
+  groups: GroupDetailResponse[];
 };

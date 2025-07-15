@@ -1,11 +1,12 @@
 'use server';
 import { callAuthenticatedApi } from '@/lib/api';
-import { SessionResults } from '@/types/session-management';
+import { SessionResultsResponse } from '@/types/session-management';
+import { API_ENDPOINTS } from '@/constants/endpoints';
 
-export async function startMatching(sessionId: number, groupId: number): Promise<{ success: boolean; message?: string; error?: string; result?: SessionResults }> {
-  const data = await callAuthenticatedApi<{ message: string, result: SessionResults }>({
+export async function startMatching(sessionId: number, groupId: number): Promise<{ success: boolean; message?: string; error?: string; result?: SessionResultsResponse }> {
+  const data = await callAuthenticatedApi<{ message: string, result: SessionResultsResponse }>({
     method: 'POST',
-    url: `/api/admin/matchmaking/sessions/${sessionId}/finish`,
+    url: API_ENDPOINTS.ADMIN.MATCHMAKING_SESSION_FINISH(sessionId),
     body: { group_id: groupId },
   });
   if (!data) {

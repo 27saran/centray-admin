@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/authOptions';
 import type { AuthCheckResponse, ApiCallOptions } from '@/types/api';
+import { API_ENDPOINTS } from '@/constants/endpoints';
 
 // エンドポイントのフルURL
 export const getBaseApiUrl = (endpoint: string): string => {
@@ -22,7 +23,7 @@ export const createAuthHeaders = (accessToken?: string): Record<string, string> 
 // 認証チェック
 async function checkAuthentication(accessToken: string): Promise<{ isValid: boolean; user?: AuthCheckResponse }> {
   try {
-    const response = await fetch(getBaseApiUrl('/api/admin/loggedin'), {
+    const response = await fetch(getBaseApiUrl(API_ENDPOINTS.ADMIN.LOGGED_IN), {
       method: 'GET',
       headers: createAuthHeaders(accessToken),
     });
