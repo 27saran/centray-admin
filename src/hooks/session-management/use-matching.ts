@@ -52,11 +52,8 @@ export function useMatching(groupId?: number) {
               if (data.trim()) {
                 try {
                   const parsed = JSON.parse(data) as MatchingSSEEventResponse;
-                  if (parsed.type === 'PLAYER_JOINED') {
-                    const filteredPlayers = parsed.queue.filter(player => player.group_id === groupId);
-                    setData(filteredPlayers);
-                    setStatusMessage(`マッチング待機中 (${filteredPlayers.length}人)`);
-                  }
+                  setData(parsed.queue);
+                  setStatusMessage(`マッチング待機中 (${parsed.queue.length}人)`);
                 } catch (e) {
                   console.error('SSEデータパースエラー:', e);
                 }
