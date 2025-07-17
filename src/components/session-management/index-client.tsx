@@ -5,6 +5,7 @@ import { Plus, RectangleGoggles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { ActiveMapping } from '@/types/session-management';
 import { formatDate } from '@/lib/format';
+import Link from 'next/link';
 
 type SessionManagementProps = {
   sessions: ActiveMapping[];
@@ -27,15 +28,21 @@ export function SessionManagementClient({ sessions }: SessionManagementProps) {
             ) : (
               sessionList.map((session) => (
                 <Card key={session.session_id} className="border mb-1">
-                  <CardContent>
-                    <div>{formatDate(session.assigned_at)}</div>
-                    <div className="flex items-center mt-2">
-                      <span className="mr-2">
-                        <RectangleGoggles size={30} />
-                      </span>
-                      <span className="text-lg font-semibold">{session.group_name}</span>
-                    </div>
-                  </CardContent>
+                  <Link
+                    href={`/session-management/play?group_id=${session.group_id}&session_id=${session.session_id}`}
+                    passHref
+                    className="block no-underline text-inherit"
+                  >
+                    <CardContent>
+                      <div>{formatDate(session.assigned_at)}</div>
+                      <div className="flex items-center mt-2">
+                        <span className="mr-2">
+                          <RectangleGoggles size={30} />
+                        </span>
+                        <span className="text-lg font-semibold">{session.group_name}</span>
+                      </div>
+                    </CardContent>
+                  </Link>
                 </Card>
               ))
             )}

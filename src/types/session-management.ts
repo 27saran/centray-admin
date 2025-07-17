@@ -1,14 +1,7 @@
-export type GetAvailableGroupsResponse = {
-  group_id: number;
-  group_name: string;
-}
-
 export type SessionResponse = {
-  id: number;
-  name: string;
-  device_set_id: number;
+  session_id: number;
+  session_name: string;
   status: number;
-  created_at: string;
 };
 
 export type ActiveMapping = {

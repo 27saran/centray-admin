@@ -4,10 +4,10 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useLobby } from '@/hooks/session-management/use-lobby';
-import type { GetAvailableGroupsResponse } from '@/types/session-management';
+import type { GroupDetailResponse } from '@/types/device-group';
 
 type SessionManagementProps = {
-  groups: GetAvailableGroupsResponse[];
+  groups: GroupDetailResponse[];
 };
 
 export function LobbyClient({ groups }: SessionManagementProps) {
@@ -43,8 +43,8 @@ export function LobbyClient({ groups }: SessionManagementProps) {
               </SelectTrigger>
               <SelectContent>
                 {groups.map((group) => (
-                  <SelectItem key={group.group_id} value={String(group.group_id)}>
-                    {group.group_name}
+                  <SelectItem key={group.id} value={String(group.id)}>
+                    {group.name}
                   </SelectItem>
                 ))}
               </SelectContent>

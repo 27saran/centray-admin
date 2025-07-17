@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Alert, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from "lucide-react";
 import { useLogin } from '@/hooks/auth/use-login';
 
@@ -22,7 +22,7 @@ export default function LoginClient() {
         {errorMessage && (
           <Alert variant="destructive" className="mb-4">
             <AlertCircleIcon />
-            <AlertTitle>{errorMessage}</AlertTitle>
+            <AlertDescription className="whitespace-pre-line">{errorMessage}</AlertDescription>
           </Alert>
         )}
 

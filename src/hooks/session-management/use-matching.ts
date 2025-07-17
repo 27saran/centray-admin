@@ -73,7 +73,7 @@ export function useMatching(groupId?: number) {
     return () => {
       setConnectionStatus('connecting');
     };
-  }, [session?.accessToken, groupId]);
+  }, [session?.accessToken, groupId, router]);
 
   const handleSessionStart = async () => {
     if (data.length === 0) {
@@ -91,6 +91,53 @@ export function useMatching(groupId?: number) {
         const result = await startMatching(Number(sessionId), groupId);
 
         console.log(result);
+
+        // TicketIDを使ってmatching_statusのSSE接続を開始
+        if (result.success && result.result?.TicketID) {
+          const connectMatchingStatusSSE = async (ticketId: string) => {
+            try {
+              const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+              if (!backendUrl) throw new Error('Backend URL is not defined');
+
+              console.log('Matching Status SSE接続開始 - TicketID:', ticketId);
+
+              const response = await fetch(`${backendUrl}${API_ENDPOINTS.ADMIN.SSE.MATCHING_STATUS}`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${session?.accessToken}`,
+                  'Accept': 'text/event-stream',
+                },
+              });
+
+              if (!response.ok || !response.body) throw new Error('Matching Status SSE接続失敗');
+
+              const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+              console.log('Matching Status SSE接続成功');
+
+              while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                value.split('\n').forEach(line => {
+                  if (line.startsWith('data: ')) {
+                    const data = line.slice(6);
+                    if (data.trim()) {
+                      try {
+                        const parsed = JSON.parse(data);
+                        console.log('Matching Status SSE データ受信:', parsed);
+                      } catch (e) {
+                        console.error('Matching Status SSEデータパースエラー:', e);
+                      }
+                    }
+                  }
+                });
+              }
+            } catch (error) {
+              console.error('Matching Status SSEエラー:', error);
+            }
+          };
+          connectMatchingStatusSSE(result.result.TicketID.toString());
+        }
 
         if (!result.success) {
           alert(result.error || 'マッチング開始に失敗しました');

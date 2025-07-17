@@ -1,10 +1,10 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { GetAvailableGroupsResponse } from '@/types/session-management';
+import type { GroupDetailResponse } from '@/types/device-group';
 import { createMatchmakingSession } from '@/app/(private)/session-management/lobby/fetch';
 import { formatDate } from '@/lib/format';
 
-export function useLobby(groups: GetAvailableGroupsResponse[]) {
+export function useLobby(groups: GroupDetailResponse[]) {
   const router = useRouter();
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +18,7 @@ export function useLobby(groups: GetAvailableGroupsResponse[]) {
     setError(null);
     setLoading(true);
 
-    const group = groups.find(g => String(g.group_id) === selectedGroup);
+    const group = groups.find(g => String(g.id) === selectedGroup);
     if (!group) {
       setError('グループ情報が見つかりません');
       setLoading(false);
@@ -26,16 +26,14 @@ export function useLobby(groups: GetAvailableGroupsResponse[]) {
     }
 
     const now = new Date().toISOString();
-    const sessionName = `${formatDate(now)} ${group.group_name}`;
-    // TODO: デバイスセットIDを動的に取得する
-    const sessionRes = await createMatchmakingSession(sessionName, 1, Number(selectedGroup));
+    const sessionName = `${formatDate(now)} ${group.name}`;
+    const sessionRes = await createMatchmakingSession(sessionName, Number(selectedGroup));
     if (!sessionRes.success || !sessionRes.data) {
       setError(sessionRes.error || 'マッチメイキングセッション作成に失敗しました');
       setLoading(false);
       return;
     }
-
-    const sessionId = sessionRes.data.id;
+    const sessionId = sessionRes.data.session_id;
 
     const params = new URLSearchParams();
     params.set('group_id', selectedGroup);
