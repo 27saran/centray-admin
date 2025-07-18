@@ -47,7 +47,6 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-tailwindcss": "^3.18.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "playwright": "^1.51.1",
     "postcss-import": "^16.1.0",

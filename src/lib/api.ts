@@ -58,7 +58,7 @@ export async function callAuthenticatedApi<T>(options: ApiCallOptions): Promise<
     headers: createAuthHeaders(session.accessToken),
   };
   if (options.body) fetchOptions.body = JSON.stringify(options.body);
-  if (options.tags) (fetchOptions as any).next = { tags: options.tags };
+  if (options.tags) (fetchOptions as RequestInit & { next?: { tags: string[] } }).next = { tags: options.tags };
 
   const response = await fetch(getBaseApiUrl(options.url), fetchOptions);
   if (!response.ok) return null;

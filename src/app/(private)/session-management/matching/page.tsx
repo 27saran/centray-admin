@@ -9,7 +9,7 @@ async function loadData(): Promise<SessionManagementData> {
   try {
     const jsonData = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(jsonData);
-  } catch (error) {
+  } catch {
     return {
       groupNames: [],
       matchCountOptions: [],
