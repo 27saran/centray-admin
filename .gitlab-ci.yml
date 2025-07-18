@@ -1,0 +1,14 @@
+include:
+  # AWS CodeCommitへの自動マージモジュールを読み込む
+  - project: 'graffity-internal-systems/automergetoawscodecommit'
+    file: '/auto_merge.yml'
+
+stages:
+  - auto_merge
+
+# 自動マージジョブ
+# memo variablesはgitlab-ciのページの環境変数で定義しているのでそっち参照してね。
+auto_merge:
+  stage: auto_merge
+  tags:
+    - centray-admin
