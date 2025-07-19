@@ -58,7 +58,7 @@ export function useLogin() {
       } else if (result?.ok) {
         router.push('/session-management');
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('ログイン中にエラーが発生しました。');
     } finally {
       setIsLoading(false);

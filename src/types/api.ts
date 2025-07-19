@@ -7,6 +7,6 @@ export type AuthCheckResponse = {
 export type ApiCallOptions = {
   method: 'GET' | 'POST' | 'DELETE' | 'PUT';
   url: string;
-  body?: any;
+  body?: unknown;
   tags?: string[];
 };

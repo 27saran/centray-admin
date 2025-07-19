@@ -7,6 +7,8 @@ import { API_ENDPOINTS } from '@/constants/endpoints';
 // NextAuthのログイン認証設定
 // https://next-auth.js.org/configuration/providers/credentials
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+
   providers: [
     CredentialsProvider({
       name: 'credentials',

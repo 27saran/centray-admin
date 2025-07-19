@@ -13,9 +13,7 @@ export function PlayClient() {
   } = usePlay();
 
   // ステータス番号からテキストを取得する関数
-  const getStatusText = (status: number) => {
-    return (PLAYER_STATUS as any)[status] || "不明";
-  };
+  const getStatusText = (status: keyof typeof PLAYER_STATUS) => PLAYER_STATUS[status] ?? "不明";
 
   return (
     <Card className="w-full">
@@ -35,7 +33,7 @@ export function PlayClient() {
                     player.status === PLAYER_STATUS_CODE.TIMEOUT ? 'text-yellow-600' :
                     'text-gray-600'
                   }`}>
-                    {getStatusText(player.status)}
+                    {getStatusText(player.status as keyof typeof PLAYER_STATUS)}
                   </span>
                 </li>
               ))
