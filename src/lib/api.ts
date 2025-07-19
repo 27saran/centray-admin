@@ -2,26 +2,10 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/authOptions';
 import type { AuthCheckResponse, ApiCallOptions } from '@/types/api';
 
-// 環境変数のデバッグ用
-export const debugApiConfig = () => {
-  console.log('API Configuration Debug:');
-  console.log('NEXT_PUBLIC_BACKEND_URL:', process.env.NEXT_PUBLIC_BACKEND_URL);
-  console.log('NODE_ENV:', process.env.NODE_ENV);
-  console.log('NEXTAUTH_SECRET:', process.env.NEXTAUTH_SECRET ? 'Set' : 'Not set');
-};
-
 // エンドポイントのフルURL
 export const getBaseApiUrl = (endpoint: string): string => {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-  
-  if (!baseUrl) {
-    console.error('NEXT_PUBLIC_BACKEND_URL is not set');
-    throw new Error('Backend URL is not configured');
-  }
-  
-  const fullUrl = `${baseUrl}${endpoint}`;
-  console.log('Generated API URL:', fullUrl);
-  return fullUrl;
+  return `${baseUrl}${endpoint}`;
 };
 
 // 認証付きAPI呼び出し用ヘッダーの生成
