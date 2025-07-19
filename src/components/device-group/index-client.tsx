@@ -33,12 +33,12 @@ export function DeviceGroupClient({ deviceGroups }: DeviceGroupClientProps) {
             <TableBody>
               {group.devices.length === 0 ? (
                 <TableRow>
-                  <TableCell className="text-muted-foreground">登録端末はありません</TableCell>
+                  <TableCell colSpan={2} className="text-muted-foreground">登録端末はありません</TableCell>
                 </TableRow>
               ) : (
                 group.devices.map((device) => (
                   <TableRow key={device.device_id}>
-                    <TableCell>{device.management_number}</TableCell>
+                    <TableCell colSpan={2}>{device.management_number}</TableCell>
                   </TableRow>
                 ))
               )}
