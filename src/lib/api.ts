@@ -1,9 +1,30 @@
+/**
+ * 認証付きAPI呼び出しの流れ
+ *
+ * === 呼び出しフロー ===
+ * 1. lobby/fetch.tsのgetAvailableGroups() など
+ *    ↓
+ * 2. callAuthenticatedApi({ method: 'GET', url: '/api/admin/groups/available' })
+ *    ↓
+ * 3. getServerSession() でセッション取得
+ *    ↓
+ * 4. checkAuthentication(accessToken) でログイン確認
+ *    ↓
+ * 5. getBaseApiUrl() でURL生成
+ *    ↓
+ * 6. createAuthHeaders() で認証ヘッダー生成
+ *    ↓
+ * 7. fetch() でAPIリクエスト実行
+ *    ↓
+ * 8. レスポンス返す
+ */
+
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/authOptions';
 import type { AuthCheckResponse, ApiCallOptions } from '@/types/api';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 
-// エンドポイントのフルURL
+// エンドポイントのURL生成
 export const getBaseApiUrl = (endpoint: string): string => {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   return `${baseUrl}${endpoint}`;
@@ -48,20 +69,25 @@ async function checkAuthentication(accessToken: string): Promise<{ isValid: bool
 
 // 認証付きAPI呼び出し
 export async function callAuthenticatedApi<T>(options: ApiCallOptions): Promise<T | null> {
-  const session = await getServerSession(authOptions);
-  if (!session || !session.accessToken) return null;
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.accessToken) return null;
 
-  const authCheck = await checkAuthentication(session.accessToken);
-  if (!authCheck.isValid) return null;
+    const authCheck = await checkAuthentication(session.accessToken);
+    if (!authCheck.isValid) return null;
 
-  const fetchOptions: RequestInit = {
-    method: options.method,
-    headers: createAuthHeaders(session.accessToken),
-  };
-  if (options.body) fetchOptions.body = JSON.stringify(options.body);
-  if (options.tags) (fetchOptions as RequestInit & { next?: { tags: string[] } }).next = { tags: options.tags };
+    const fetchOptions: RequestInit = {
+      method: options.method,
+      headers: createAuthHeaders(session.accessToken),
+    };
+    if (options.body) fetchOptions.body = JSON.stringify(options.body);
+    if (options.tags) (fetchOptions as RequestInit & { next?: { tags: string[] } }).next = { tags: options.tags };
 
-  const response = await fetch(getBaseApiUrl(options.url), fetchOptions);
-  if (!response.ok) return null;
-  return await response.json();
+    const response = await fetch(getBaseApiUrl(options.url), fetchOptions);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error('API call failed:', error);
+    return null;
+  }
 }

@@ -19,7 +19,7 @@ export const API_ENDPOINTS = {
     CHANGE_GAME_STATE: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/change-game-state`,
     // SSE関連
     SSE: {
-      MATCHING: '/api/admin/sse?stream=matchmaking',
+      MATCHMAKING: '/api/admin/sse?stream=matchmaking',
       MATCHING_STATUS: '/api/admin/sse?stream=matching_status',
       PLAYER_STATUS: '/api/admin/sse?stream=player_status',
       PHASE_STATUS: '/api/admin/sse?stream=phase_status', // TODO: 未実装
