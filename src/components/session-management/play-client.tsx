@@ -1,60 +1,60 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { usePlay } from '@/hooks/session-management/use-play';
+import { PLAYER_STATUS, PLAYER_STATUS_CODE } from '@/constants/enum';
 
-type PlayClientProps = {
-  DeviceSource: string[];
-  phaseSequence: { phase: string }[];
-};
-
-export function PlayClient({ DeviceSource, phaseSequence }: PlayClientProps) {
+export function PlayClient() {
   const {
-    groupName,
-    currentPhaseData,
-    isSessionComplete,
+    handleSessionForceEnd,
     handleSessionEnd,
-    DeviceSource: devices,
-  } = usePlay(DeviceSource, phaseSequence);
+    playerStatusData,
+  } = usePlay();
+
+  // ステータス番号からテキストを取得する関数
+  const getStatusText = (status: keyof typeof PLAYER_STATUS) => PLAYER_STATUS[status] ?? "不明";
 
   return (
     <Card className="w-full">
       <CardContent className="flex flex-col items-center">
-        <p className="text-lg font-semibold mb-2 text-center">
+        <p className="text-lg font-semibold mb-2 text-center mt-2">
           セッション参加中の<br />端末一覧
         </p>
-        <p className="text-sm text-muted-foreground mb-4">{groupName}</p>
-        <div className="w-full h-60 overflow-y-auto border rounded-md p-2 mb-6">
+        <div className="w-full h-60 overflow-y-auto border rounded-md p-2 my-4">
           <ul>
-            {devices.map((device, index) => (
-              <li key={index} className="flex items-center p-2 border-b last:border-b-0">
-                <span>{device}</span>
-                <span className="ml-auto text-sm text-green-600">正常</span>
+            {playerStatusData.length > 0 ? (
+              playerStatusData.map((player) => (
+                <li key={player.device_id} className="flex items-center p-2 border-b last:border-b-0">
+                  <span>{player.management_number}</span>
+                  <span className={`ml-auto text-sm ${
+                    player.status === PLAYER_STATUS_CODE.CONNECTED ? 'text-green-600' :
+                    player.status === PLAYER_STATUS_CODE.DISCONNECTED ? 'text-red-600' :
+                    player.status === PLAYER_STATUS_CODE.TIMEOUT ? 'text-yellow-600' :
+                    'text-gray-600'
+                  }`}>
+                    {getStatusText(player.status as keyof typeof PLAYER_STATUS)}
+                  </span>
+                </li>
+              ))
+            ) : (
+              <li className="flex items-center p-2 text-gray-500">
+                <span>端末データを取得中...</span>
               </li>
-            ))}
+            )}
           </ul>
         </div>
-        <Separator className="mt-2 mb-4" />
-        <div className="text-center">
-          <h4 className="text-md font-semibold">進行状況</h4>
-          <p className="font-bold text-gray-600 my-2">{currentPhaseData?.phase ?? '読込み中...'}</p>
-          {isSessionComplete && <p className="text-sm font-bold text-sky-600">セッション完了</p>}
-        </div>
-        {!isSessionComplete && (
+        <div className="flex gap-4 mt-4">
           <Button
-            className="mt-8 w-full bg-red-600 hover:bg-red-700"
-            onClick={handleSessionEnd}
+            className="flex-1 bg-red-600 hover:bg-red-700"
+            onClick={handleSessionForceEnd}
           >
             セッション全体の緊急停止
           </Button>
-        )}
-        {isSessionComplete && (
-          <Button className="mt-8 w-full" onClick={handleSessionEnd}>
+          <Button className="flex-1" onClick={handleSessionEnd}>
             セッション終了
           </Button>
-        )}
+        </div>
       </CardContent>
     </Card>
   );

@@ -2,6 +2,7 @@ import { NextAuthOptions, User, Session } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getBaseApiUrl } from '@/lib/api';
 import { JWT } from 'next-auth/jwt';
+import { API_ENDPOINTS } from '@/constants/endpoints';
 
 // NextAuthのログイン認証設定
 // https://next-auth.js.org/configuration/providers/credentials
@@ -21,7 +22,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const response = await fetch(getBaseApiUrl('/api/admin/login'), {
+          const response = await fetch(getBaseApiUrl(API_ENDPOINTS.ADMIN.LOGIN), {
             method: 'POST',
             headers: {
               "Content-Type": "application/json",

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -19,6 +19,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function useLogin() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,6 +30,16 @@ export function useLogin() {
       password: '',
     },
   });
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error === 'auth_expired') {
+      setErrorMessage('セッションが期限切れです\n再ログインしてください');
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('error');
+      window.history.replaceState({}, '', newUrl.toString());
+    }
+  }, [searchParams]);
 
   // ログイン処理
   const onSubmit = async (values: FormValues) => {

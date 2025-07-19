@@ -3,10 +3,10 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useDeviceGroupEdit } from '@/hooks/device-group/use-device-group-edit';
-import type { GroupDetailData, DeviceData } from '@/types/device-group';
+import type { GroupDetailResponse, DeviceData } from '@/types/device-group';
 
 type EditDeviceGroupClientProps = {
-  groupDetail: GroupDetailData;
+  groupDetail: GroupDetailResponse;
   unassignedDevices: DeviceData[];
 };
 
@@ -22,7 +22,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
   } = useDeviceGroupEdit({ groupDetail, unassignedDevices });
 
   return (
-    <Card>
+    <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>グループ編集</CardTitle>
         <CardDescription>{groupDetail.name}</CardDescription>

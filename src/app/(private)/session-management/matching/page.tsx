@@ -1,32 +1,16 @@
 import { MatchingClient } from '@/components/session-management/matching-client';
-import fs from 'fs/promises';
-import path from 'path';
-import { SessionManagementData } from '@/types/session-management';
 
-async function loadData(): Promise<SessionManagementData> {
-  // TODO: ダミーデータ API呼ぶ予定
-  const filePath = path.join(process.cwd(), 'src', 'data', 'session-management-mock.json');
-  try {
-    const jsonData = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(jsonData);
-  } catch {
-    return {
-      groupNames: [],
-      matchCountOptions: [],
-      initialGroupName: 'エラー',
-      DeviceSource: [],
-      phaseSequence: [],
-      sessions: [],
-    };
-  }
-}
+type MatchingPageProps = {
+  searchParams: Promise<{ group_id?: string }>;
+};
 
-export default async function MatchingPage() {
-  const data = await loadData();
+export default async function MatchingPage({ searchParams }: MatchingPageProps) {
+  const params = await searchParams;
+  const groupId = params.group_id ? Number(params.group_id) : undefined;
 
   return (
     <div className="flex items-center min-h-screen">
-      <MatchingClient initialGroupName={data.initialGroupName} DeviceSource={data.DeviceSource} />
+      <MatchingClient groupId={groupId} />
     </div>
   );
 }

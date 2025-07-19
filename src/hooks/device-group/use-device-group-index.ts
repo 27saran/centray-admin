@@ -1,15 +1,17 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createDeviceGroup } from '@/app/(private)/device-group/fetch';
-import type { GroupDetailData } from '@/types/device-group';
+import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
+import type { GroupDetailResponse } from '@/types/device-group';
 
 type UseDeviceGroupListProps = {
-  deviceGroups: GroupDetailData[];
+  deviceGroups: GroupDetailResponse[];
 };
 
 export function useDeviceGroupList({ deviceGroups }: UseDeviceGroupListProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const { checkAuth } = useCheckAuth();
 
   // グループ追加
   const addGroup = async () => {
@@ -30,6 +32,7 @@ export function useDeviceGroupList({ deviceGroups }: UseDeviceGroupListProps) {
           alert(`「${groupName}」が正常に作成されました`);
           router.refresh();
         } else {
+          await checkAuth();
           alert(`エラー: ${result.error}`);
         }
       } catch (error) {

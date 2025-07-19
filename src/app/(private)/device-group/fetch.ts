@@ -1,24 +1,25 @@
 'use server';
 
-import type { GroupDetailData } from '@/types/device-group';
+import type { GroupDetailResponse } from '@/types/device-group';
 import { callAuthenticatedApi } from '@/lib/api';
 import { revalidateTag } from 'next/cache';
+import { API_ENDPOINTS } from '@/constants/endpoints';
 
 // グループ一覧取得API
-export async function loadDeviceGroups(): Promise<GroupDetailData[]> {
-  const data = await callAuthenticatedApi<GroupDetailData[]>({
+export async function loadDeviceGroups(): Promise<GroupDetailResponse[]> {
+  const data = await callAuthenticatedApi<GroupDetailResponse[]>({
     method: 'GET',
-    url: '/api/admin/groups',
+    url: API_ENDPOINTS.ADMIN.GROUPS,
     tags: ['device-groups'],
   });
   return data ?? [];
 }
 
 // グループ作成API
-export async function createDeviceGroup(groupName: string): Promise<{ success: boolean; data?: GroupDetailData; error?: string }> {
-  const data = await callAuthenticatedApi<GroupDetailData>({
+export async function createDeviceGroup(groupName: string): Promise<{ success: boolean; data?: GroupDetailResponse; error?: string }> {
+  const data = await callAuthenticatedApi<GroupDetailResponse>({
     method: 'POST',
-    url: '/api/admin/groups',
+    url: API_ENDPOINTS.ADMIN.GROUPS,
     body: { name: groupName },
   });
   if (!data) {

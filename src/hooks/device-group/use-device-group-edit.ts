@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteGroup, assignDevicesToGroup } from '@/app/(private)/device-group/edit/[id]/fetch';
-import type { GroupDetailData, DeviceData } from '@/types/device-group';
+import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
+import type { GroupDetailResponse, DeviceData } from '@/types/device-group';
 
 type UseDeviceGroupEditProps = {
-  groupDetail: GroupDetailData;
+  groupDetail: GroupDetailResponse;
   unassignedDevices: DeviceData[];
 };
 
 export function useDeviceGroupEdit({ groupDetail, unassignedDevices }: UseDeviceGroupEditProps) {
   const router = useRouter();
+  const { checkAuth } = useCheckAuth();
   const initialAssignedDevices = groupDetail.devices;
   const [assignedDevices, setAssignedDevices] = useState<DeviceData[]>(groupDetail.devices);
   const [unAssignedDevices, setUnAssignedDevices] = useState<DeviceData[]>(unassignedDevices);
@@ -46,6 +48,7 @@ export function useDeviceGroupEdit({ groupDetail, unassignedDevices }: UseDevice
           alert('保存しました');
           router.push('/device-group');
         } else {
+          await checkAuth();
           alert(`保存に失敗しました: ${result.error}`);
         }
       } catch (error) {
@@ -64,6 +67,7 @@ export function useDeviceGroupEdit({ groupDetail, unassignedDevices }: UseDevice
           alert('グループを削除しました');
           router.push('/device-group');
         } else {
+          await checkAuth();
           alert(`削除に失敗しました: ${result.error}`);
         }
       } catch (error) {
