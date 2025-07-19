@@ -4,7 +4,7 @@ import type { AuthCheckResponse, ApiCallOptions } from '@/types/api';
 
 // エンドポイントのフルURL
 export const getBaseApiUrl = (endpoint: string): string => {
-  const baseUrl = process.env.BACKEND_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   return `${baseUrl}${endpoint}`;
 };
 
