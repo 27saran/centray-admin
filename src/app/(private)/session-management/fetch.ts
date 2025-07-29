@@ -11,5 +11,5 @@ export async function loadSessions(): Promise<SessionMappingsResponse> {
     url: API_ENDPOINTS.ADMIN.MATCHMAKING_SESSIONS_ACTIVE,
     tags: ['sessions'],
   });
-  return data ?? { active_mappings: [] };
+  return data ?? { active_sessions: [] };
 }

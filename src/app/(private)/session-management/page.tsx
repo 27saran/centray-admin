@@ -6,7 +6,7 @@ export default async function SessionManagementPage() {
 
   return (
     <div className="items-center">
-      <SessionManagementClient sessions={data.active_mappings} />
+      <SessionManagementClient sessions={data.active_sessions} />
     </div>
   );
 }

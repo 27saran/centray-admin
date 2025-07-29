@@ -3,12 +3,12 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Plus, RectangleGoggles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import type { ActiveMapping } from '@/types/session-management';
+import type { ActiveSession } from '@/types/session-management';
 import { formatDate } from '@/lib/format';
 import Link from 'next/link';
 
 type SessionManagementProps = {
-  sessions: ActiveMapping[];
+  sessions: ActiveSession[];
 };
 
 export function SessionManagementClient({ sessions }: SessionManagementProps) {

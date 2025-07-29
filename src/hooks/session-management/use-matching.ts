@@ -1,102 +1,125 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { MatchingDataResponse, MatchingSSEEventResponse } from '@/types/session-management';
-import { startMatching } from '@/app/(private)/session-management/matching/fetch';
+import { MatchingSSEEventResponse, MatchingDataResponse } from '@/types/session-management';
+import { SessionFinish } from '@/app/(private)/session-management/matching/fetch';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import { connectSSE } from '@/lib/sse';
+import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
+import { ConnectionStatus } from '@/types/sse';
 
 export function useMatching(groupId?: number) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: session } = useSession();
-  const [data, setData] = useState<MatchingDataResponse[]>([]);
-  const [statusMessage, setStatusMessage] = useState('マッチング情報に接続中...');
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
+  const { data: session, status } = useSession();
+  const { checkAuth } = useCheckAuth();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const [sessionStatus, setSessionStatus] = useState(false);
 
-  // Matching SSE接続
-  useEffect(() => {
-    if (!session?.accessToken || !groupId) {
-      setStatusMessage(groupId ? 'セッション情報の取得に失敗しました' : 'グループIDが指定されていません');
-      setConnectionStatus('error');
-      return;
+  const [matchings, setMatchings] = useState<MatchingDataResponse[]>([]);
+  const [statusMessage, setStatusMessage] = useState('マッチング情報に接続中...');
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting');
+
+  // SSE接続
+  const initializeSSEConnection = useCallback(async () => {
+    if (!groupId) return;
+    if (status === 'loading') return;
+    // 古いSSE接続があれば中断して新しい接続を準備する
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
     }
+    abortControllerRef.current = new AbortController();
+
+    await checkAuth();
 
     setConnectionStatus('connecting');
     setStatusMessage('マッチング情報に接続中...');
 
     connectSSE(
       API_ENDPOINTS.ADMIN.SSE.MATCHMAKING,
-      session.accessToken,
+      session?.accessToken || '',
       (parsed) => {
         const sseData = parsed as MatchingSSEEventResponse;
-        setData(sseData.queue);
+        setMatchings(sseData.queue);
         setStatusMessage(`マッチング待機中 (${sseData.queue.length}人)`);
       },
       (error) => {
         console.error('SSEエラー:', error);
+        // AbortErrorは正常な中断なのでエラー状態にしなくていい
+        if (error.name === 'AbortError') {
+          return;
+        }
         setConnectionStatus('error');
         setStatusMessage('マッチング情報の取得に失敗しました');
       },
       () => {
+        console.log('SSE接続成功');
         setConnectionStatus('connected');
-      }
+      },
+      abortControllerRef.current.signal
     );
+  }, [groupId, status, checkAuth, session?.accessToken]);
 
+  useEffect(() => {
+    initializeSSEConnection();
     return () => {
+      // クリーンアップ時にSSE接続を中断
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
       setConnectionStatus('connecting');
     };
-  }, [session?.accessToken, groupId, router]);
+  }, [initializeSSEConnection]);
 
-  const handleSessionStart = async () => {
-    if (data.length === 0) {
-      alert('マッチング中のプレイヤーがいません');
-      return;
-    }
+  // 再接続ボタン
+  // これ押したら古いSSE接続を中断して新しい接続を準備する（マッチング待機にデータが入らなかった時とかに押す）
+  const handleReconnect = useCallback(async () => {
+    setConnectionStatus('connecting');
+    // 再接続が早すぎてUIに変化がないので明示的に1秒待つ
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    initializeSSEConnection();
+    (document.activeElement as HTMLElement)?.blur();
+  }, [initializeSSEConnection]);
 
+  // セッション開始ボタン
+  const handleSessionFinish = async () => {
     if (window.confirm('セッションを開始します。\nよろしいですか？')) {
-      const params = new URLSearchParams();
-      if (groupId) params.set('group_id', String(groupId));
+      setSessionStatus(true);
+      try {
+        const params = new URLSearchParams();
+        if (groupId) params.set('group_id', String(groupId));
 
-      const sessionId = searchParams.get('session_id');
-      if (sessionId) params.set('session_id', sessionId);
-      if (sessionId && groupId) {
-        const result = await startMatching(Number(sessionId), groupId);
+        const sessionId = searchParams.get('session_id');
+        if (sessionId) params.set('session_id', sessionId);
 
-        console.log(result);
+        if (sessionId && groupId) {
+          const response = await SessionFinish(Number(sessionId), groupId);
 
-        // TicketIDを使ってmatching_statusのSSE接続を開始
-        if (result.success && result.result?.TicketID) {
-          console.log('Matching Status SSE接続開始 - TicketID:', result.result.TicketID);
+          await checkAuth();
 
-          connectSSE(
-            API_ENDPOINTS.ADMIN.SSE.MATCHING_STATUS,
-            session?.accessToken || '',
-            (parsed) => {
-              console.log('Matching Status SSE データ受信:', parsed);
-            },
-            (error) => {
-              console.error('Matching Status SSEエラー:', error);
-            },
-            () => {
-              console.log('Matching Status SSE接続成功');
-            }
-          );
+          if (!response.success) {
+            alert(`マッチングに失敗しました: ${response.error}`);
+          }
         }
 
-        if (!result.success) {
-          alert(result.error || 'マッチング開始に失敗しました');
-          return;
+        setSessionStatus(false);
+        router.push(`/session-management/play?${params.toString()}`);
+      } catch (error) {
+        setSessionStatus(false);
+        if (error instanceof Error && error.message !== 'マッチング失敗') {
+          console.error('セッション開始エラー:', error);
+          alert('セッション開始に失敗しました');
         }
       }
-      router.push(`/session-management/play?${params.toString()}`);
     }
   };
 
   return {
-    data,
+    matchings,
     statusMessage,
     connectionStatus,
-    handleSessionStart,
+    sessionStatus,
+    handleSessionFinish,
+    handleReconnect,
   };
 }
