@@ -15,19 +15,15 @@ export type SessionMappingsResponse = {
   active_sessions: ActiveSession[];
 };
 
-export type MatchingDataResponse = {
+export type MatchmakingDataResponse = {
+  session_id: number;
   player_id: number;
-  device_id: number;
   management_number: string;
-  group_id: number;
-  group_name: string;
-  is_anywhere: boolean;
-  join_time: string;
+  created_at: string;
 };
 
-export type MatchingSSEEventResponse = {
-  queue: MatchingDataResponse[];
-  type: 'PLAYER_JOINED' | 'PLAYER_LEFT';
+export type MatchmakingSSEEventResponse = {
+  queue: MatchmakingDataResponse[];
 };
 
 export type MatchedPlayerSession = {

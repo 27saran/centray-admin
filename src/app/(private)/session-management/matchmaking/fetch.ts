@@ -10,11 +10,11 @@ export async function SessionFinish(sessionId: number, groupId: number): Promise
     body: { group_id: groupId },
   });
   if (!data) {
-    return { success: false, error: 'Failed to finish matching' };
+    return { success: false, error: 'Failed to finish matchmaking' };
   }
 
   const isSuccess = data.ticket_status === 'COMPLETED';
-  const message = isSuccess ? 'マッチング完了' : `マッチング失敗: ${data.ticket_status}`;
+  const message = isSuccess ? 'マッチメイキング完了' : `マッチメイキング失敗: ${data.ticket_status}`;
   const error = !isSuccess ? (data.error || `Status: ${data.ticket_status}`) : undefined;
 
   return {

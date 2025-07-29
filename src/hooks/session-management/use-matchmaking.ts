@@ -1,14 +1,14 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { MatchingSSEEventResponse, MatchingDataResponse } from '@/types/session-management';
-import { SessionFinish } from '@/app/(private)/session-management/matching/fetch';
+import { MatchmakingSSEEventResponse, MatchmakingDataResponse } from '@/types/session-management';
+import { SessionFinish } from '@/app/(private)/session-management/matchmaking/fetch';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import { connectSSE } from '@/lib/sse';
 import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
 import { ConnectionStatus } from '@/types/sse';
 
-export function useMatching(groupId?: number) {
+export function useMatchmaking(groupId?: number) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
@@ -16,32 +16,33 @@ export function useMatching(groupId?: number) {
   const abortControllerRef = useRef<AbortController | null>(null);
   const [sessionStatus, setSessionStatus] = useState(false);
 
-  const [matchings, setMatchings] = useState<MatchingDataResponse[]>([]);
-  const [statusMessage, setStatusMessage] = useState('マッチング情報に接続中...');
+  const [matchmakingQueue, setMatchmakingQueue] = useState<MatchmakingDataResponse[]>([]);
+  const [statusMessage, setStatusMessage] = useState('マッチメイキング情報に接続中...');
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting');
 
   // SSE接続
-  const initializeSSEConnection = useCallback(async () => {
+  const initializeMatchmakingConnection = useCallback(async () => {
     if (!groupId) return;
     if (status === 'loading') return;
-    // 古いSSE接続があれば中断して新しい接続を準備する
+    // SSE接続があれば中断する
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+    // 新しいAbortControllerを作成
     abortControllerRef.current = new AbortController();
 
     await checkAuth();
 
     setConnectionStatus('connecting');
-    setStatusMessage('マッチング情報に接続中...');
+    setStatusMessage('マッチメイキング情報に接続中...');
 
     connectSSE(
       API_ENDPOINTS.ADMIN.SSE.MATCHMAKING,
       session?.accessToken || '',
       (parsed) => {
-        const sseData = parsed as MatchingSSEEventResponse;
-        setMatchings(sseData.queue);
-        setStatusMessage(`マッチング待機中 (${sseData.queue.length}人)`);
+        const sseData = parsed as MatchmakingSSEEventResponse;
+        setMatchmakingQueue(sseData.queue);
+        setStatusMessage(`マッチメイキング待機中 (${sseData.queue.length}人)`);
       },
       (error) => {
         console.error('SSEエラー:', error);
@@ -50,7 +51,7 @@ export function useMatching(groupId?: number) {
           return;
         }
         setConnectionStatus('error');
-        setStatusMessage('マッチング情報の取得に失敗しました');
+        setStatusMessage('マッチメイキング情報の取得に失敗しました');
       },
       () => {
         console.log('SSE接続成功');
@@ -61,7 +62,7 @@ export function useMatching(groupId?: number) {
   }, [groupId, status, checkAuth, session?.accessToken]);
 
   useEffect(() => {
-    initializeSSEConnection();
+    initializeMatchmakingConnection();
     return () => {
       // クリーンアップ時にSSE接続を中断
       if (abortControllerRef.current) {
@@ -69,17 +70,16 @@ export function useMatching(groupId?: number) {
       }
       setConnectionStatus('connecting');
     };
-  }, [initializeSSEConnection]);
+  }, [initializeMatchmakingConnection]);
 
   // 再接続ボタン
-  // これ押したら古いSSE接続を中断して新しい接続を準備する（マッチング待機にデータが入らなかった時とかに押す）
   const handleReconnect = useCallback(async () => {
     setConnectionStatus('connecting');
     // 再接続が早すぎてUIに変化がないので明示的に1秒待つ
     await new Promise(resolve => setTimeout(resolve, 1000));
-    initializeSSEConnection();
+    initializeMatchmakingConnection();
     (document.activeElement as HTMLElement)?.blur();
-  }, [initializeSSEConnection]);
+  }, [initializeMatchmakingConnection]);
 
   // セッション開始ボタン
   const handleSessionFinish = async () => {
@@ -98,7 +98,7 @@ export function useMatching(groupId?: number) {
           await checkAuth();
 
           if (!response.success) {
-            alert(`マッチングに失敗しました: ${response.error}`);
+            alert(`マッチメイキングに失敗しました: ${response.error}`);
           }
         }
 
@@ -106,7 +106,7 @@ export function useMatching(groupId?: number) {
         router.push(`/session-management/play?${params.toString()}`);
       } catch (error) {
         setSessionStatus(false);
-        if (error instanceof Error && error.message !== 'マッチング失敗') {
+        if (error instanceof Error && error.message !== 'マッチメイキング失敗') {
           console.error('セッション開始エラー:', error);
           alert('セッション開始に失敗しました');
         }
@@ -115,7 +115,7 @@ export function useMatching(groupId?: number) {
   };
 
   return {
-    matchings,
+    matchmakingQueue,
     statusMessage,
     connectionStatus,
     sessionStatus,
