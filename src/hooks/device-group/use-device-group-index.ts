@@ -14,7 +14,7 @@ export function useDeviceGroupList({ deviceGroups }: UseDeviceGroupListProps) {
   const { checkAuth } = useCheckAuth();
 
   // グループ追加
-  const addGroup = async () => {
+  const handleAddGroup = async () => {
     const existingNumbers = (deviceGroups || [])
       .map(group => {
         const match = group.name.match(/^グループ(\d+)$/);
@@ -49,7 +49,7 @@ export function useDeviceGroupList({ deviceGroups }: UseDeviceGroupListProps) {
 
   return {
     isPending,
-    addGroup,
+    handleAddGroup,
     handleEditClick,
   };
 }

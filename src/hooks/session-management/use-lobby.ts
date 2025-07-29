@@ -38,7 +38,7 @@ export function useLobby(groups: GroupDetailResponse[]) {
     const params = new URLSearchParams();
     params.set('group_id', selectedGroup);
     params.set('session_id', String(sessionId));
-    router.push(`/session-management/matching?${params.toString()}`);
+    router.push(`/session-management/matchmaking?${params.toString()}`);
     setLoading(false);
   };
 

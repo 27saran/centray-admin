@@ -4,7 +4,7 @@ export type SessionResponse = {
   status: number;
 };
 
-export type ActiveMapping = {
+export type ActiveSession = {
   session_id: number;
   group_id: number;
   group_name: string;
@@ -12,33 +12,30 @@ export type ActiveMapping = {
 };
 
 export type SessionMappingsResponse = {
-  active_mappings: ActiveMapping[];
+  active_sessions: ActiveSession[];
 };
 
-export type MatchingDataResponse = {
+export type MatchmakingDataResponse = {
+  session_id: number;
   player_id: number;
-  device_id: number;
   management_number: string;
-  group_id: number;
-  group_name: string;
-  is_anywhere: boolean;
-  join_time: string;
+  created_at: string;
 };
 
-export type MatchingSSEEventResponse = {
-  queue: MatchingDataResponse[];
-  type: 'PLAYER_JOINED' | 'PLAYER_LEFT';
+export type MatchmakingSSEEventResponse = {
+  queue: MatchmakingDataResponse[];
 };
 
-type SessionResult = {
-  GroupID: number;
-  PlayerCount: number;
-  MatchingStarted: boolean;
-  Error: string;
+export type MatchedPlayerSession = {
+  ID: string;
+  PlayerID: string;
 };
 
-export type SessionResultsResponse = {
-  SessionID: number;
-  TicketID: number | null;
-  GroupResults: SessionResult[];
+export type SessionFinishResponse = {
+  ticket_id: string;
+  ticket_status: 'COMPLETED' | 'CANCELLED' | 'FAILED' | 'TIMED_OUT';
+  estimated_wait_time?: number;
+  port?: number;
+  matched_player_sessions?: MatchedPlayerSession[];
+  error?: string;
 };

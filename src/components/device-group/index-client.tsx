@@ -10,12 +10,12 @@ type DeviceGroupClientProps = {
 };
 
 export function DeviceGroupClient({ deviceGroups }: DeviceGroupClientProps) {
-  const { isPending, addGroup, handleEditClick } = useDeviceGroupList({ deviceGroups });
+  const { isPending, handleAddGroup, handleEditClick } = useDeviceGroupList({ deviceGroups });
 
   return (
     <>
       <div className="flex justify-end">
-        <Button onClick={addGroup} disabled={isPending}>
+        <Button onClick={handleAddGroup} disabled={isPending}>
           {isPending ? '作成中...' : 'グループ追加'}
         </Button>
       </div>
