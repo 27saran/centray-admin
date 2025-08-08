@@ -39,3 +39,20 @@ export type SessionFinishResponse = {
   matched_player_sessions?: MatchedPlayerSession[];
   error?: string;
 };
+
+export type PhaseData = {
+  id: number;
+  order: number;
+  name: string;
+  rule: number;
+  condition_type: number;
+  state: number;
+  parent_id?: number;
+  is_clear?: boolean;
+};
+
+export type PhaseProgressResponse = {
+  phases: PhaseData[];
+  conditions: any[];
+  condition_parts: any[];
+};

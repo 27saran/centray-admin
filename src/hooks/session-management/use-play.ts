@@ -7,6 +7,8 @@ import { connectSSE } from '@/lib/sse';
 import { PlayerStatusData, PlayerStatusSSEData } from '@/types/player-status';
 import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
 import { ConnectionStatus } from '@/types/sse';
+import { PhaseProgressResponse } from '@/types/session-management';
+import { PLAYER_STATUS } from '@/constants/enum';
 
 export function usePlay() {
   const router = useRouter();
@@ -14,6 +16,7 @@ export function usePlay() {
   const { data: session, status } = useSession();
   const { checkAuth } = useCheckAuth();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const phaseAbortControllerRef = useRef<AbortController | null>(null);
   const groupName = searchParams.get('group') ?? '不明なグループ';
   const sessionIdParam = searchParams.get('session_id');
   const sessionId = sessionIdParam ? Number(sessionIdParam) : null;
@@ -23,9 +26,18 @@ export function usePlay() {
   const [playerStatusData, setPlayerStatusData] = useState<PlayerStatusData[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting');
   const [statusMessage, setStatusMessage] = useState('プレイヤー情報に接続中...');
+  const [phaseProgress, setPhaseProgress] = useState<PhaseProgressResponse | null>(null);
+  const [isGameClear, setIsGameClear] = useState(false);
 
-  // SSE接続
-  const initializeSSEConnection = useCallback(async () => {
+  const getStatusText = (status: number) => PLAYER_STATUS[status as keyof typeof PLAYER_STATUS] ?? "不明";
+
+  const getPhaseNames = () => {
+    if (!phaseProgress?.phases) return [];
+    return phaseProgress.phases.map(phase => phase.name);
+  };
+
+  // Player Status SSE接続
+  const initializePlayerStatusConnection = useCallback(async () => {
     if (!sessionId) return;
     if (status === 'loading') return;
 
@@ -93,26 +105,68 @@ export function usePlay() {
     );
   }, [sessionId, groupId, status, checkAuth, session?.accessToken]);
 
-  // Player Status SSE接続
+  // Phase Progress SSE接続
+  const initializePhaseProgressConnection = useCallback(async () => {
+    if (!sessionId) return;
+    if (status === 'loading') return;
+
+    if (phaseAbortControllerRef.current) {
+      phaseAbortControllerRef.current.abort();
+    }
+    phaseAbortControllerRef.current = new AbortController();
+
+    await checkAuth();
+
+    connectSSE(
+      API_ENDPOINTS.ADMIN.SSE.PHASE_STATUS,
+      session?.accessToken || '',
+      (parsed) => {
+        console.log('Phase Progress SSE データ受信:', parsed);
+        const phaseData = parsed as PhaseProgressResponse;
+        setPhaseProgress(phaseData);
+        // ゲームクリア判定
+        const hasGameClear = phaseData.phases.some(phase => phase.is_clear === true);
+        setIsGameClear(hasGameClear);
+      },
+      (error) => {
+        console.error('Phase Progress SSE エラー:', error);
+        if (error.name === 'AbortError') {
+          return;
+        }
+        console.error('フェーズ進捗状況のSSE接続でエラーが発生しました');
+      },
+      () => {
+        console.log('Phase Progress SSE接続成功');
+      },
+      phaseAbortControllerRef.current.signal
+    );
+  }, [sessionId, status, checkAuth, session?.accessToken]);
+
+  // SSE接続の初期化
   useEffect(() => {
-    initializeSSEConnection();
+    initializePlayerStatusConnection();
+    initializePhaseProgressConnection();
     return () => {
       // クリーンアップ時にSSE接続を中断
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
+      if (phaseAbortControllerRef.current) {
+        phaseAbortControllerRef.current.abort();
+      }
       setConnectionStatus('connecting');
     };
-  }, [initializeSSEConnection]);
+  }, [initializePlayerStatusConnection, initializePhaseProgressConnection]);
 
   // 再接続ボタン
   const handleReconnect = useCallback(async () => {
     setConnectionStatus('connecting');
     // 再接続が早すぎてUIに変化がないので明示的に1秒待つ
     await new Promise(resolve => setTimeout(resolve, 1000));
-    initializeSSEConnection();
+    initializePlayerStatusConnection();
+    initializePhaseProgressConnection();
     (document.activeElement as HTMLElement)?.blur();
-  }, [initializeSSEConnection]);
+  }, [initializePlayerStatusConnection, initializePhaseProgressConnection]);
 
   const handleSessionEnd = async () => {
     if (sessionId) {
@@ -122,10 +176,12 @@ export function usePlay() {
   };
 
   const handleSessionForceEnd = async () => {
-    if (sessionId) {
-      await forceEndSession(sessionId);
+    if (window.confirm('セッションが緊急停止します。本当によろしいですか？')) {
+      if (sessionId) {
+        await forceEndSession(sessionId);
+      }
+      router.push('/session-management');
     }
-    router.push('/session-management');
   };
 
   return {
@@ -138,5 +194,9 @@ export function usePlay() {
     connectionStatus,
     statusMessage,
     handleReconnect,
+    phaseProgress,
+    isGameClear,
+    getStatusText,
+    getPhaseNames,
   };
 }

@@ -3,7 +3,7 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { usePlay } from '@/hooks/session-management/use-play';
-import { PLAYER_STATUS, PLAYER_STATUS_CODE } from '@/constants/enum';
+import { PLAYER_STATUS_CODE } from '@/constants/enum';
 
 export function PlayClient() {
   const {
@@ -13,10 +13,11 @@ export function PlayClient() {
     connectionStatus,
     statusMessage,
     handleReconnect,
+    phaseProgress,
+    isGameClear,
+    getStatusText,
+    getPhaseNames,
   } = usePlay();
-
-  // ステータス番号からテキストを取得する関数
-  const getStatusText = (status: keyof typeof PLAYER_STATUS) => PLAYER_STATUS[status] ?? "不明";
 
   return (
     <Card className="w-full">
@@ -44,28 +45,46 @@ export function PlayClient() {
                     player.status === PLAYER_STATUS_CODE.TIMEOUT ? 'text-yellow-600' :
                     'text-gray-600'
                   }`}>
-                    {getStatusText(player.status as keyof typeof PLAYER_STATUS)}
+                    {getStatusText(player.status)}
                   </span>
                 </li>
               ))}
             </ul>
           )}
         </div>
+        <p className="text-sm font-medium text-blue-800 mb-1 text-center">
+          {isGameClear ? 'セッションが全て正常に終了しました' : 'ゲーム進行状況'}
+        </p>
+        {!isGameClear && phaseProgress && (
+          <div className="w-full mb-4 p-3 bg-blue-50 rounded-md border">
+            <div className="flex flex-col items-center space-y-1">
+              {getPhaseNames().map((phaseName, index) => (
+                <div key={index} className="text-sm text-blue-700 font-medium">
+                  {phaseName}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="flex gap-4 mt-4">
-          <Button
-            className="flex-1 bg-red-600 hover:bg-red-700"
-            onClick={handleSessionForceEnd}
-            disabled={connectionStatus === 'connecting'}
-          >
-            セッション全体の緊急停止
-          </Button>
-          <Button
-            className="flex-1"
-            onClick={handleSessionEnd}
-            disabled={connectionStatus === 'connecting'}
-          >
-            セッション終了
-          </Button>
+          {!isGameClear && (
+            <Button
+              className="flex-1 bg-red-600 hover:bg-red-700"
+              onClick={handleSessionForceEnd}
+              disabled={connectionStatus === 'connecting'}
+            >
+              セッション全体の緊急停止
+            </Button>
+          )}
+          {isGameClear && (
+            <Button
+              className="flex-1"
+              onClick={handleSessionEnd}
+              disabled={connectionStatus === 'connecting'}
+            >
+              セッション終了
+            </Button>
+          )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-center">
