@@ -17,11 +17,12 @@ export const API_ENDPOINTS = {
     MATCHMAKING_SESSION_FINISH: (sessionId: number) => `/api/admin/matchmaking/sessions/${sessionId}/finish`,
     // ゲーム関連
     CHANGE_GAME_STATE: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/change-game-state`,
+    GET_PHASE_PROGRESS: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/phase-progress-broadcast`,
     // SSE関連
     SSE: {
       MATCHMAKING: '/api/admin/sse?stream=matchmaking',
       PLAYER_STATUS: '/api/admin/sse?stream=player_status',
-      PHASE_STATUS: '/api/admin/sse?stream=phase_status', // TODO: 未実装
+      PHASE_STATUS: '/api/admin/sse?stream=phase_status',
     },
   },
   // NextAuth関連
