@@ -53,6 +53,6 @@ export type PhaseData = {
 
 export type PhaseProgressResponse = {
   phases: PhaseData[];
-  conditions: any[];
-  condition_parts: any[];
+  conditions: unknown[];
+  condition_parts: unknown[];
 };
