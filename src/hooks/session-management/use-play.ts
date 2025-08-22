@@ -169,10 +169,12 @@ export function usePlay() {
   }, [initializePlayerStatusConnection, initializePhaseProgressConnection]);
 
   const handleSessionEnd = async () => {
-    if (sessionId) {
-      await endSession(sessionId);
+    if (window.confirm('セッションを終了します。よろしいですか？')) {
+      if (sessionId) {
+        await endSession(sessionId);
+      }
+      router.push('/session-management');
     }
-    router.push('/session-management');
   };
 
   const handleSessionForceEnd = async () => {
