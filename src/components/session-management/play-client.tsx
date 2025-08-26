@@ -53,9 +53,9 @@ export function PlayClient() {
           )}
         </div>
         <p className="text-sm font-medium text-blue-800 mb-1 text-center">
-          {isGameClear ? 'セッションが全て正常に終了しました' : 'ゲーム進行状況'}
+          ゲーム進行状況
         </p>
-        {!isGameClear && phaseProgress && (
+        {phaseProgress && (
           <div className="w-full mb-4 p-3 bg-blue-50 rounded-md border">
             <div className="flex flex-col items-center space-y-1">
               {getPhaseNames().map((phaseName, index) => (
@@ -67,24 +67,20 @@ export function PlayClient() {
           </div>
         )}
         <div className="flex gap-4 mt-4">
-          {!isGameClear && (
-            <Button
-              className="flex-1 bg-red-600 hover:bg-red-700"
-              onClick={handleSessionForceEnd}
-              disabled={connectionStatus === 'connecting'}
-            >
-              セッション全体の緊急停止
-            </Button>
-          )}
-          {isGameClear && (
-            <Button
-              className="flex-1"
-              onClick={handleSessionEnd}
-              disabled={connectionStatus === 'connecting'}
-            >
-              セッション終了
-            </Button>
-          )}
+          <Button
+            className="flex-1 bg-red-600 hover:bg-red-700"
+            onClick={handleSessionForceEnd}
+            disabled={connectionStatus === 'connecting'}
+          >
+            セッション全体の緊急停止
+          </Button>
+          <Button
+            className="flex-1"
+            onClick={handleSessionEnd}
+            disabled={connectionStatus === 'connecting'}
+          >
+            セッション終了
+          </Button>
         </div>
       </CardContent>
       <CardFooter className="flex justify-center">
