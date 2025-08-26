@@ -14,7 +14,6 @@ export function PlayClient() {
     statusMessage,
     handleReconnect,
     phaseProgress,
-    isGameClear,
     getStatusText,
     getPhaseNames,
   } = usePlay();
