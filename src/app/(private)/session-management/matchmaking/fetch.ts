@@ -2,6 +2,7 @@
 import { callAuthenticatedApi } from '@/lib/api';
 import { SessionFinishResponse } from '@/types/session-management';
 import { API_ENDPOINTS } from '@/constants/endpoints';
+import { revalidateTag } from 'next/cache';
 
 export async function SessionFinish(sessionId: number, groupId: number): Promise<{ success: boolean; message?: string; error?: string; result?: SessionFinishResponse }> {
   const data = await callAuthenticatedApi<SessionFinishResponse>({
@@ -23,4 +24,16 @@ export async function SessionFinish(sessionId: number, groupId: number): Promise
     error,
     result: data
   };
+}
+
+export async function deleteMatchmakingSession(sessionId: number, groupId: number): Promise<{ success: boolean; error?: string }> {
+  const data = await callAuthenticatedApi<{ success: boolean; error?: string }>({
+    method: 'DELETE',
+    url: API_ENDPOINTS.ADMIN.MATCHMAKING_SESSION_DELETE(sessionId, groupId),
+  });
+  if (!data || data.success === false) {
+    return { success: false, error: data?.error || 'Failed to delete matchmaking session' };
+  }
+  revalidateTag('sessions');
+  return { success: true };
 }

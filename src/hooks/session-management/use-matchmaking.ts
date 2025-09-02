@@ -2,7 +2,7 @@ import { useEffect, useCallback, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { MatchmakingSSEEventResponse, MatchmakingDataResponse } from '@/types/session-management';
-import { SessionFinish } from '@/app/(private)/session-management/matchmaking/fetch';
+import { SessionFinish, deleteMatchmakingSession } from '@/app/(private)/session-management/matchmaking/fetch';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import { connectSSE } from '@/lib/sse';
 import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
@@ -98,7 +98,10 @@ export function useMatchmaking(groupId?: number) {
           await checkAuth();
 
           if (!response.success) {
+            await deleteMatchmakingSession(Number(sessionId), groupId);
             alert(`マッチメイキングに失敗しました: ${response.error}`);
+            router.push('/session-management');
+            return;
           }
         }
 
@@ -109,6 +112,11 @@ export function useMatchmaking(groupId?: number) {
         if (error instanceof Error && error.message !== 'マッチメイキング失敗') {
           console.error('セッション開始エラー:', error);
           alert('セッション開始に失敗しました');
+          const sessionId = searchParams.get('session_id');
+          if (sessionId && groupId) {
+            await deleteMatchmakingSession(Number(sessionId), groupId);
+          }
+          router.push('/session-management');
         }
       }
     }
