@@ -2,8 +2,10 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useDeviceGroupEdit } from '@/hooks/device-group/use-device-group-edit';
 import type { GroupDetailResponse, DeviceData } from '@/types/device-group';
+import { SquarePen, Check, X } from 'lucide-react';
 
 type EditDeviceGroupClientProps = {
   groupDetail: GroupDetailResponse;
@@ -14,18 +16,54 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
   const {
     assignedDevices,
     unAssignedDevices,
+    isEditingName,
+    editingName,
+    setEditingName,
     handleAddDevice,
     handleRemoveDevice,
     handleSaveChanges,
     handleDeleteGroup,
     handleGoBack,
+    handleStartEditName,
+    handleCancelEditName,
+    handleSaveName,
   } = useDeviceGroupEdit({ groupDetail, unassignedDevices });
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>グループ編集</CardTitle>
-        <CardDescription>{groupDetail.name}</CardDescription>
+        <CardDescription>
+          {isEditingName ? (
+            <div className="flex items-center gap-2">
+              <Input
+                value={editingName}
+                onChange={(e) => setEditingName(e.target.value)}
+                className="flex-1"
+                placeholder="グループ名を入力"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    handleCancelEditName();
+                  }
+                }}
+              />
+              <Button size="sm" variant="outline" onClick={handleSaveName}>
+                <Check className="h-4 w-4" />
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleCancelEditName}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span>{groupDetail.name}</span>
+              <Button size="sm" variant="ghost" onClick={handleStartEditName}>
+                <SquarePen className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <h3 className="font-bold mb-2">所属中の端末</h3>
@@ -65,10 +103,12 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
         </div>
       </CardContent>
       <CardFooter className="flex flex-col items-end gap-4">
-        <Button onClick={handleSaveChanges}>保存する</Button>
-        <Button variant="destructive" onClick={handleDeleteGroup}>
-          グループ削除
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="destructive" onClick={handleDeleteGroup}>
+            グループ削除
+          </Button>
+          <Button onClick={handleSaveChanges}>保存する</Button>
+        </div>
         <Button variant="outline" onClick={handleGoBack}>
           戻る
         </Button>

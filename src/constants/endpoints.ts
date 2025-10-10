@@ -9,8 +9,9 @@ export const API_ENDPOINTS = {
     GROUPS: '/api/admin/groups',
     GROUPS_AVAILABLE: '/api/admin/groups/available',
     GROUP_DETAIL: (id: number) => `/api/admin/groups/${id}`,
+    UPDATE_GROUP_NAME: (id: number) => `/api/admin/groups/${id}`,
     DEVICE_ASSIGN: '/api/admin/devices/assign/groups',
-    GROUP_DEVICES: (groupId: number) => `/api/admin/groups/${groupId}/devices`,
+    DEVICE_UNASSIGNED: '/api/admin/devices/unassigned',
     // セッション関連
     MATCHMAKING_SESSIONS: '/api/admin/matchmaking/sessions',
     MATCHMAKING_SESSIONS_ACTIVE: '/api/admin/matchmaking/sessions/active',

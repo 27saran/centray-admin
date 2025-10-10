@@ -12,7 +12,7 @@ export default async function EditDeviceGroupByIdPage({ params }: { params: Prom
 
   const [groupDetail, unassignedDevices] = await Promise.all([
     loadGroupDetail(groupId),
-    loadUnassignedDevices(groupId)
+    loadUnassignedDevices()
   ]);
   if (!groupDetail) {
     notFound();

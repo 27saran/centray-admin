@@ -16,15 +16,27 @@ export function PlayClient() {
     phaseProgress,
     getStatusText,
     getPhaseNames,
-  } = usePlay();
-
-  return (
+    errorCount,
+    isInitialDataReceived,
+  } = usePlay();  return (
     <Card className="w-full">
       <CardContent className="flex flex-col items-center">
+        <Button
+            className="flex-1 bg-red-600 hover:bg-red-700 mb-4"
+            onClick={handleSessionForceEnd}
+            disabled={connectionStatus === 'connecting'}
+          >
+            セッション全体の緊急停止
+        </Button>
         <p className="text-lg font-semibold mb-2 text-center mt-2">
           セッション参加中の<br />端末一覧
         </p>
         <p className="text-sm text-muted-foreground mb-2">{statusMessage}</p>
+        {errorCount > 0 && (
+          <p className="text-sm text-red-600 font-medium mb-2">
+            接続エラー数: {errorCount}台
+          </p>
+        )}
         <div className="w-full h-60 overflow-y-auto border rounded-md p-2 my-4">
           {playerStatusData.length === 0 ? (
             <div className="flex items-center justify-center h-full text-gray-500">
@@ -54,25 +66,22 @@ export function PlayClient() {
         <p className="text-sm font-medium text-blue-800 mb-1 text-center">
           ゲーム進行状況
         </p>
-        {phaseProgress && (
-          <div className="w-full mb-4 p-3 bg-blue-50 rounded-md border">
-            <div className="flex flex-col items-center space-y-1">
-              {getPhaseNames().map((phaseName, index) => (
+        <div className="w-full mb-4 p-3 bg-blue-50 rounded-md border">
+          <div className="flex flex-col items-center space-y-1">
+            {phaseProgress && phaseProgress.phases && phaseProgress.phases.length > 0 ? (
+              getPhaseNames().map((phaseName, index) => (
                 <div key={index} className="text-sm text-blue-700 font-medium">
                   {phaseName}
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500 text-center">
+                {isInitialDataReceived ? 'フェーズ情報なし' : 'フェーズ情報を取得中...'}
+              </p>
+            )}
           </div>
-        )}
-        <div className="flex gap-4 mt-4">
-          <Button
-            className="flex-1 bg-red-600 hover:bg-red-700"
-            onClick={handleSessionForceEnd}
-            disabled={connectionStatus === 'connecting'}
-          >
-            セッション全体の緊急停止
-          </Button>
+        </div>
+        <div className="flex mt-4">
           <Button
             className="flex-1"
             onClick={handleSessionEnd}

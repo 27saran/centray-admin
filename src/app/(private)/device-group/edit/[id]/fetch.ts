@@ -15,10 +15,10 @@ export async function loadGroupDetail(id: number): Promise<GroupDetailResponse |
 }
 
 // 未アサインデバイス一覧取得API
-export async function loadUnassignedDevices(groupId: number): Promise<DeviceData[]> {
+export async function loadUnassignedDevices(): Promise<DeviceData[]> {
   const data = await callAuthenticatedApi<DeviceData[]>({
     method: 'GET',
-    url: API_ENDPOINTS.ADMIN.GROUP_DEVICES(groupId),
+    url: API_ENDPOINTS.ADMIN.DEVICE_UNASSIGNED,
   });
   return data ?? [];
 }
@@ -32,6 +32,20 @@ export async function assignDevicesToGroup(groupId: number, addDeviceIds: number
   });
   if (!data || data.success === false) {
     return { success: false, error: data?.error || 'Failed to assign devices' };
+  }
+  revalidateTag('device-groups');
+  return { success: true };
+}
+
+// グループ名更新API
+export async function updateGroupName(id: number, name: string): Promise<{ success: boolean; error?: string }> {
+  const data = await callAuthenticatedApi<{ success: boolean; error?: string }>({
+    method: 'PUT',
+    url: API_ENDPOINTS.ADMIN.UPDATE_GROUP_NAME(id),
+    body: { name },
+  });
+  if (!data || data.success === false) {
+    return { success: false, error: data?.error || 'Failed to update group name' };
   }
   revalidateTag('device-groups');
   return { success: true };

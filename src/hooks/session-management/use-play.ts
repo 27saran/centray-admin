@@ -8,6 +8,7 @@ import { PlayerStatusData, PlayerStatusSSEData } from '@/types/player-status';
 import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
 import { ConnectionStatus } from '@/types/sse';
 import { PhaseProgressResponse } from '@/types/session-management';
+import { PLAYER_STATUS_CODE } from '@/constants/enum';
 import { PLAYER_STATUS } from '@/constants/enum';
 
 export function usePlay() {
@@ -27,6 +28,7 @@ export function usePlay() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting');
   const [statusMessage, setStatusMessage] = useState('プレイヤー情報に接続中...');
   const [phaseProgress, setPhaseProgress] = useState<PhaseProgressResponse | null>(null);
+  const [isInitialDataReceived, setIsInitialDataReceived] = useState(false);
   const [isGameClear, setIsGameClear] = useState(false);
 
   const getStatusText = (status: number) => PLAYER_STATUS[status as keyof typeof PLAYER_STATUS] ?? "不明";
@@ -114,6 +116,7 @@ export function usePlay() {
       phaseAbortControllerRef.current.abort();
     }
     phaseAbortControllerRef.current = new AbortController();
+    setIsInitialDataReceived(false);
 
     await checkAuth();
 
@@ -123,6 +126,7 @@ export function usePlay() {
       (parsed) => {
         console.log('Phase Progress SSE データ受信:', parsed);
         const phaseData = parsed as PhaseProgressResponse;
+        setIsInitialDataReceived(true);
         setPhaseProgress(phaseData);
         // ゲームクリア判定
         const hasGameClear = phaseData.phases.some(phase => phase.is_clear === true);
@@ -186,6 +190,11 @@ export function usePlay() {
     }
   };
 
+  const errorCount = playerStatusData.filter(
+    player => player.status !== PLAYER_STATUS_CODE.UNSPECIFIED &&
+              player.status !== PLAYER_STATUS_CODE.CONNECTED
+  ).length;
+
   return {
     groupName,
     currentPhaseData: null,
@@ -200,5 +209,7 @@ export function usePlay() {
     isGameClear,
     getStatusText,
     getPhaseNames,
+    errorCount,
+    isInitialDataReceived,
   };
 }

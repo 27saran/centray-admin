@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { Group, MonitorSpeaker, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { logout } from '@/app/(private)/auth/fetch';
@@ -11,6 +14,7 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { PasswordDialog } from '@/components/device-group/password-dialog';
 
 const items = [
   {
@@ -32,6 +36,7 @@ const items = [
 
 export function AppSidebar() {
   const { setOpen, setOpenMobile, isMobile } = useSidebar();
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -39,6 +44,10 @@ export function AppSidebar() {
     } else {
       setOpen(false);
     }
+  };
+
+  const handleDeviceGroupClick = () => {
+    setPasswordDialogOpen(true);
   };
 
   const handleLogout = async () => {
@@ -52,40 +61,65 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar side="right">
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="mt-8">
-              {items.map((item) =>
-                item.title === 'ログアウト' ? (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 w-full"
-                      >
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ) : (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url} onClick={handleLinkClick}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <>
+      <Sidebar side="right">
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu className="mt-8">
+                {items.map((item) => {
+                  if (item.title === 'ログアウト') {
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 w-full"
+                          >
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  } else if (item.title === '端末グループ管理') {
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <button
+                            type="button"
+                            onClick={handleDeviceGroupClick}
+                            className="flex items-center gap-2 w-full"
+                          >
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  } else {
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <Link href={item.url} onClick={handleLinkClick}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  }
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <PasswordDialog
+        open={passwordDialogOpen}
+        onOpenChange={setPasswordDialogOpen}
+      />
+    </>
   );
 }

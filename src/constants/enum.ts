@@ -6,7 +6,7 @@ export const GAME_STATUS = {
 
 // プレイヤーステータス定数
 export const PLAYER_STATUS = {
-  0: "不明",
+  0: "接続待ち",
   1: "接続中",
   2: "切断",
   3: "時間切れ",
