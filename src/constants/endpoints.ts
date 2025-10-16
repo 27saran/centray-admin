@@ -22,9 +22,9 @@ export const API_ENDPOINTS = {
     GET_PHASE_PROGRESS: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/phase-progress-broadcast`,
     // SSE関連
     SSE: {
-      MATCHMAKING: '/api/admin/sse?stream=matchmaking',
-      PLAYER_STATUS: '/api/admin/sse?stream=player_status',
-      PHASE_STATUS: '/api/admin/sse?stream=phase_status',
+      MATCHMAKING: (groupId: number) => `/api/admin/sse?stream=matchmaking:${groupId}`,
+      PLAYER_STATUS: (groupId: number) => `/api/admin/sse?stream=player_status:${groupId}`,
+      PHASE_STATUS: (sessionId: number) =>`/api/admin/sse?stream=phase_progress:${sessionId}`,
     },
   },
   // NextAuth関連

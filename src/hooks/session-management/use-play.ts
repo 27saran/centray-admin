@@ -40,7 +40,7 @@ export function usePlay() {
 
   // Player Status SSE接続
   const initializePlayerStatusConnection = useCallback(async () => {
-    if (!sessionId) return;
+    if (!sessionId || !groupId) return;
     if (status === 'loading') return;
 
     // SSE接続があれば中断する
@@ -58,7 +58,7 @@ export function usePlay() {
     setPlayerStatusData([]);
 
     connectSSE(
-      API_ENDPOINTS.ADMIN.SSE.PLAYER_STATUS,
+      API_ENDPOINTS.ADMIN.SSE.PLAYER_STATUS(groupId),
       session?.accessToken || '',
       (parsed) => {
         if (typeof parsed === 'object' && parsed !== null) {
@@ -121,7 +121,7 @@ export function usePlay() {
     await checkAuth();
 
     connectSSE(
-      API_ENDPOINTS.ADMIN.SSE.PHASE_STATUS,
+      API_ENDPOINTS.ADMIN.SSE.PHASE_STATUS(sessionId),
       session?.accessToken || '',
       (parsed) => {
         console.log('Phase Progress SSE データ受信:', parsed);
