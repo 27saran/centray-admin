@@ -37,7 +37,7 @@ export function useMatchmaking(groupId?: number) {
     setStatusMessage('マッチメイキング情報に接続中...');
 
     connectSSE(
-      API_ENDPOINTS.ADMIN.SSE.MATCHMAKING,
+      API_ENDPOINTS.ADMIN.SSE.MATCHMAKING(groupId),
       session?.accessToken || '',
       (parsed) => {
         const sseData = parsed as MatchmakingSSEEventResponse;
