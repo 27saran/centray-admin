@@ -18,6 +18,7 @@ export function PlayClient() {
     getPhaseNames,
     errorCount,
     isInitialDataReceived,
+    isGameFinished,
   } = usePlay();  return (
     <Card className="w-full">
       <CardContent className="flex flex-col items-center">
@@ -85,7 +86,7 @@ export function PlayClient() {
           <Button
             className="flex-1"
             onClick={handleSessionEnd}
-            disabled={connectionStatus === 'connecting'}
+            disabled={!isGameFinished}
           >
             セッション終了
           </Button>

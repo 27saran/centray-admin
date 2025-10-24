@@ -29,7 +29,7 @@ export function usePlay() {
   const [statusMessage, setStatusMessage] = useState('プレイヤー情報に接続中...');
   const [phaseProgress, setPhaseProgress] = useState<PhaseProgressResponse | null>(null);
   const [isInitialDataReceived, setIsInitialDataReceived] = useState(false);
-  const [isGameClear, setIsGameClear] = useState(false);
+  const [isGameFinished, setIsGameFinished] = useState(false);
 
   const getStatusText = (status: number) => PLAYER_STATUS[status as keyof typeof PLAYER_STATUS] ?? "不明";
 
@@ -128,9 +128,11 @@ export function usePlay() {
         const phaseData = parsed as PhaseProgressResponse;
         setIsInitialDataReceived(true);
         setPhaseProgress(phaseData);
-        // ゲームクリア判定
-        const hasGameClear = phaseData.phases.some(phase => phase.is_clear === true);
-        setIsGameClear(hasGameClear);
+        // ゲーム終了判定
+        if (phaseData.is_finished) {
+          setIsGameFinished(true);
+          console.log('ゲーム終了を検知しました');
+        }
       },
       (error) => {
         console.error('Phase Progress SSE エラー:', error);
@@ -206,7 +208,7 @@ export function usePlay() {
     statusMessage,
     handleReconnect,
     phaseProgress,
-    isGameClear,
+    isGameFinished,
     getStatusText,
     getPhaseNames,
     errorCount,
