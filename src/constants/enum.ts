@@ -1,5 +1,7 @@
 // ゲーム状態定数
-export const GAME_STATUS = {
+export const GAME_STATE = {
+  READY: 0,
+  ACTIVE: 1,
   FINISH: 2,
   FORCE_FINISH: 3,
 } as const;

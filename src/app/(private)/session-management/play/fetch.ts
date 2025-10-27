@@ -2,7 +2,7 @@
 
 import { callAuthenticatedApi } from '@/lib/api';
 import { API_ENDPOINTS } from '@/constants/endpoints';
-import { GAME_STATUS } from '@/constants/enum';
+import { GAME_STATE } from '@/constants/enum';
 
 
 // フェーズ進行状況取得
@@ -19,7 +19,7 @@ export async function endSession(session_id: number) {
     method: 'POST',
     url: API_ENDPOINTS.ADMIN.CHANGE_GAME_STATE(session_id),
     body: {
-      game_state: GAME_STATUS.FINISH,
+      game_state: GAME_STATE.FINISH,
       reason: 'ゲーム正常終了のため',
     },
   });
@@ -31,7 +31,7 @@ export async function forceEndSession(session_id: number) {
     method: 'POST',
     url: API_ENDPOINTS.ADMIN.CHANGE_GAME_STATE(session_id),
     body: {
-      game_state: GAME_STATUS.FORCE_FINISH,
+      game_state: GAME_STATE.FORCE_FINISH,
       reason: 'ゲーム緊急停止のため',
     },
   });

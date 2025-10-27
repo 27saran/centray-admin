@@ -54,5 +54,5 @@ export type PhaseProgressResponse = {
   phases: PhaseData[];
   conditions: unknown[];
   condition_parts: unknown[];
-  is_finished?: boolean;
+  game_state?: number;
 };

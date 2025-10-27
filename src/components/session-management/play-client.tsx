@@ -3,7 +3,7 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { usePlay } from '@/hooks/session-management/use-play';
-import { PLAYER_STATUS_CODE } from '@/constants/enum';
+import { PLAYER_STATUS_CODE, PLAYER_STATUS } from '@/constants/enum';
 
 export function PlayClient() {
   const {
@@ -14,7 +14,6 @@ export function PlayClient() {
     statusMessage,
     handleReconnect,
     phaseProgress,
-    getStatusText,
     getPhaseNames,
     errorCount,
     isInitialDataReceived,
@@ -57,7 +56,7 @@ export function PlayClient() {
                     player.status === PLAYER_STATUS_CODE.TIMEOUT ? 'text-yellow-600' :
                     'text-gray-600'
                   }`}>
-                    {getStatusText(player.status)}
+                    {PLAYER_STATUS[player.status as keyof typeof PLAYER_STATUS] ?? '不明'}
                   </span>
                 </li>
               ))}

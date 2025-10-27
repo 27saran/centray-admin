@@ -8,8 +8,7 @@ import { PlayerStatusData, PlayerStatusSSEData } from '@/types/player-status';
 import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
 import { ConnectionStatus } from '@/types/sse';
 import { PhaseProgressResponse } from '@/types/session-management';
-import { PLAYER_STATUS_CODE } from '@/constants/enum';
-import { PLAYER_STATUS } from '@/constants/enum';
+import { PLAYER_STATUS_CODE, GAME_STATE } from '@/constants/enum';
 
 export function usePlay() {
   const router = useRouter();
@@ -30,8 +29,6 @@ export function usePlay() {
   const [phaseProgress, setPhaseProgress] = useState<PhaseProgressResponse | null>(null);
   const [isInitialDataReceived, setIsInitialDataReceived] = useState(false);
   const [isGameFinished, setIsGameFinished] = useState(false);
-
-  const getStatusText = (status: number) => PLAYER_STATUS[status as keyof typeof PLAYER_STATUS] ?? "不明";
 
   const getPhaseNames = () => {
     if (!phaseProgress?.phases) return [];
@@ -129,9 +126,9 @@ export function usePlay() {
         setIsInitialDataReceived(true);
         setPhaseProgress(phaseData);
         // ゲーム終了判定
-        if (phaseData.is_finished) {
+        if (phaseData.game_state === GAME_STATE.FINISH || phaseData.game_state === GAME_STATE.FORCE_FINISH) {
           setIsGameFinished(true);
-          console.log('ゲーム終了を検知しました');
+          console.log('ゲーム終了を検知しました', { game_state: phaseData.game_state });
         }
       },
       (error) => {
@@ -209,7 +206,6 @@ export function usePlay() {
     handleReconnect,
     phaseProgress,
     isGameFinished,
-    getStatusText,
     getPhaseNames,
     errorCount,
     isInitialDataReceived,
