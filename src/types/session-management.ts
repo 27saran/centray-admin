@@ -1,7 +1,6 @@
 export type SessionResponse = {
   session_id: number;
   session_name: string;
-  status: number;
 };
 
 export type ActiveSession = {
@@ -55,4 +54,5 @@ export type PhaseProgressResponse = {
   phases: PhaseData[];
   conditions: unknown[];
   condition_parts: unknown[];
+  game_state?: number;
 };
