@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { endSession, forceEndSession } from '@/app/(private)/session-management/play/fetch';
+import { endSession, forceEndSession, fetchPhaseProgress } from '@/app/(private)/session-management/play/fetch';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import { connectSSE } from '@/lib/sse';
 import { PlayerStatusData, PlayerStatusSSEData } from '@/types/player-status';
@@ -138,8 +138,15 @@ export function usePlay() {
         }
         console.error('フェーズ進捗状況のSSE接続でエラーが発生しました');
       },
-      () => {
+      async () => {
         console.log('Phase Progress SSE接続成功');
+        // SSE接続確立後にフェーズ進行ブロードキャストを開始
+        try {
+          await fetchPhaseProgress(sessionId);
+          console.log('フェーズ進行ブロードキャスト開始成功');
+        } catch (error) {
+          console.error('フェーズ進行ブロードキャスト開始失敗:', error);
+        }
       },
       phaseAbortControllerRef.current.signal
     );
