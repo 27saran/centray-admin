@@ -28,11 +28,8 @@ export const connectSSE = async (
       .pipeThrough(new TextDecoderStream())  // バイナリ→テキストに変換
       .getReader();  // データを順次読み取る
 
-    // 接続成功時のコールバック（成功メッセージを送信してくれたりする）
-    // 任意オプションのため、デフォルトでは呼ばれないようにしてる
-    if (onConnect) {
-      onConnect();
-    }
+    // onConnectを呼んだかどうかのフラグ（初回データ受信時に1度だけ呼ぶ）
+    let hasCalledOnConnect = false;
 
     while (true) {
       // abortシグナルを検知したら中断する
@@ -53,6 +50,12 @@ export const connectSSE = async (
             try {
               // JSONとしてパースしてコールバックに渡す
               const parsed = JSON.parse(data);
+              // 初回データ受信時のみ接続成功のコールバックを呼ぶ
+              if (!hasCalledOnConnect && onConnect) {
+                hasCalledOnConnect = true;
+                onConnect();
+              }
+
               onData(parsed);
             } catch (e) {
               console.error('SSE data parse error:', e);
