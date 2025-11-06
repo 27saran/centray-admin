@@ -143,7 +143,6 @@ export function usePlay() {
         // SSE接続確立後にフェーズ進行ブロードキャストを開始
         try {
           await fetchPhaseProgress(sessionId);
-          console.log('フェーズ進行ブロードキャスト開始成功');
         } catch (error) {
           console.error('フェーズ進行ブロードキャスト開始失敗:', error);
         }
