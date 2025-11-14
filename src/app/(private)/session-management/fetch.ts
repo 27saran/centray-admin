@@ -20,6 +20,6 @@ export async function getGameServerInfos(sessionId: number): Promise<unknown[]> 
     method: 'GET',
     url: API_ENDPOINTS.ADMIN.GET_GAME_SERVER_INFOS(sessionId),
   });
-  const infos = (data as any)?.game_server_infos;
+  const infos = data?.game_server_infos;
   return Array.isArray(infos) ? infos : [];
 }

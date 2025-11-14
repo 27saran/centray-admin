@@ -24,7 +24,7 @@ export function SessionManagementClient({ sessions }: SessionManagementProps) {
       const ids = await getAssignedSessionIds(sessionList);
       setAssignedIds(new Set(ids));
     })();
-  }, [sessionList]);
+  }, [sessionList, getAssignedSessionIds]);
 
   return (
     <>
