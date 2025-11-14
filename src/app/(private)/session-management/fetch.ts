@@ -23,23 +23,3 @@ export async function getGameServerInfos(sessionId: number): Promise<unknown[]> 
   const infos = (data as any)?.game_server_infos;
   return Array.isArray(infos) ? infos : [];
 }
-
-// 現在のマッチメイキングキュー取得
-export async function getMatchmakingQueueForLobby(groupId: number): Promise<unknown[]> {
-  const data = await callAuthenticatedApi<{ queue?: unknown[] }>({
-    method: 'GET',
-    url: API_ENDPOINTS.ADMIN.MATCHMAKING_GROUP_QUEUE(groupId),
-  });
-  const queue = (data as any)?.queue;
-  return Array.isArray(queue) ? queue : [];
-}
-
-// セッション削除
-export async function deleteSessionMapping(sessionId: number, groupId: number): Promise<boolean> {
-  const data = await callAuthenticatedApi<{ success: boolean; error?: string }>({
-    method: 'DELETE',
-    url: API_ENDPOINTS.ADMIN.MATCHMAKING_SESSION_DELETE(sessionId, groupId),
-  });
-  if (data === null) return true;
-  return Boolean(data && data.success);
-}
