@@ -8,7 +8,6 @@ import { PLAYER_STATUS_CODE, PLAYER_STATUS } from '@/constants/enum';
 export function PlayClient() {
   const {
     handleSessionForceEnd,
-    handleSessionEnd,
     playerStatusData,
     connectionStatus,
     statusMessage,
@@ -24,7 +23,7 @@ export function PlayClient() {
         <Button
             className="flex-1 bg-red-600 hover:bg-red-700 mb-4"
             onClick={handleSessionForceEnd}
-            disabled={connectionStatus === 'connecting'}
+            disabled={connectionStatus === 'connecting' || isGameFinished}
           >
             セッション全体の緊急停止
         </Button>
@@ -82,12 +81,14 @@ export function PlayClient() {
           </div>
         </div>
         <div className="flex mt-4">
-          <Button
-            className="flex-1"
-            onClick={handleSessionEnd}
-            disabled={!isGameFinished}
-          >
-            セッション終了
+          <Button className="flex-1" asChild>
+            <a
+              href="/session-management"
+              aria-disabled={!isGameFinished}
+              className={!isGameFinished ? 'pointer-events-none opacity-50' : undefined}
+            >
+              セッション終了
+            </a>
           </Button>
         </div>
       </CardContent>

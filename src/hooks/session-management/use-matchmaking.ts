@@ -2,7 +2,7 @@ import { useEffect, useCallback, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { MatchmakingSSEEventResponse, MatchmakingDataResponse } from '@/types/session-management';
-import { SessionFinish, deleteMatchmakingSession } from '@/app/(private)/session-management/matchmaking/fetch';
+import { SessionFinish, deleteMatchmakingSession, getCurrentMatchmakingQueue } from '@/app/(private)/session-management/matchmaking/fetch';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import { connectSSE } from '@/lib/sse';
 import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
@@ -20,6 +20,18 @@ export function useMatchmaking(groupId?: number) {
   const [statusMessage, setStatusMessage] = useState('マッチメイキング情報に接続中...');
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting');
 
+  // 現在のマッチメイキングキュー取得
+  const fetchCurrentMatchmakingQueue = useCallback(async (gid: number) => {
+    try {
+      const res = await getCurrentMatchmakingQueue(gid);
+      if (res?.success) {
+        setMatchmakingQueue(res.queue ?? []);
+      }
+    } catch (e) {
+      console.error('マッチメイキングキュー取得エラー:', e);
+    }
+  }, []);
+
   // SSE接続
   const initializeMatchmakingConnection = useCallback(async () => {
     if (!groupId) return;
@@ -34,7 +46,8 @@ export function useMatchmaking(groupId?: number) {
     await checkAuth();
 
     setConnectionStatus('connecting');
-    setStatusMessage('マッチメイキング情報に接続中...');
+
+    await fetchCurrentMatchmakingQueue(groupId);
 
     connectSSE(
       API_ENDPOINTS.ADMIN.SSE.MATCHMAKING(groupId),
@@ -59,7 +72,7 @@ export function useMatchmaking(groupId?: number) {
       },
       abortControllerRef.current.signal
     );
-  }, [groupId, status, checkAuth, session?.accessToken]);
+  }, [groupId, status, checkAuth, session?.accessToken, fetchCurrentMatchmakingQueue]);
 
   useEffect(() => {
     initializeMatchmakingConnection();

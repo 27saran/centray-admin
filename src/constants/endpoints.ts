@@ -12,12 +12,15 @@ export const API_ENDPOINTS = {
     UPDATE_GROUP_NAME: (id: number) => `/api/admin/groups/${id}`,
     DEVICE_ASSIGN: '/api/admin/devices/assign/groups',
     DEVICE_UNASSIGNED: '/api/admin/devices/unassigned',
+    // マッチメイキング関連
+    MATCHMAKING_GROUP_QUEUE: (groupId: number) => `/api/admin/matchmaking/groups/${groupId}/queue`,
     // セッション関連
     MATCHMAKING_SESSIONS: '/api/admin/matchmaking/sessions',
     MATCHMAKING_SESSIONS_ACTIVE: '/api/admin/matchmaking/sessions/active',
     MATCHMAKING_SESSION_FINISH: (sessionId: number) => `/api/admin/matchmaking/sessions/${sessionId}/finish`,
     MATCHMAKING_SESSION_DELETE: (sessionId: number, groupId: number) => `/api/admin/matchmaking/sessions/${sessionId}/groups/${groupId}`,
     // ゲーム関連
+    GET_GAME_SERVER_INFOS: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}`,
     CHANGE_GAME_STATE: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/change-game-state`,
     GET_PHASE_PROGRESS: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/phase-progress-broadcast`,
     // SSE関連
