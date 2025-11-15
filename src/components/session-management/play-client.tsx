@@ -110,7 +110,7 @@ export function PlayClient() {
         </Button>
       </CardFooter>
       <Dialog open={showFinishedModal} onOpenChange={setShowFinishedModal}>
-        <DialogContent>
+        <DialogContent className="py-10 sm:py-10 min-h-50">
           <DialogHeader>
             <DialogTitle>セッションが完了しました</DialogTitle>
             <DialogDescription>
