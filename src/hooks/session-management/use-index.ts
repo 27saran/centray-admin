@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import type { ActiveSession } from '@/types/session-management';
-import { getActiveAssignedSessionIds, getGameServerInfos } from '@/app/(private)/session-management/fetch';
+import { getGameServerInfos } from '@/app/(private)/session-management/fetch';
 
 export function useIndex() {
   const router = useRouter();
@@ -30,9 +30,21 @@ export function useIndex() {
   }, [router]);
 
   const getAssignedSessionIds = useCallback(async (sessions: ActiveSession[]): Promise<number[]> => {
-    const activeAssignedIds = await getActiveAssignedSessionIds();
-    const set = new Set(activeAssignedIds);
-    return sessions.filter(s => set.has(s.session_id)).map(s => s.session_id);
+    const settled = await Promise.allSettled(
+      sessions.map((s) =>
+        getGameServerInfos(s.session_id).then((infos) => Array.isArray(infos) && infos.length > 0)
+      )
+    );
+    const assignedIds: number[] = [];
+    for (let idx = 0; idx < settled.length; idx += 1) {
+      const res = settled[idx] as PromiseSettledResult<boolean>;
+      const session = sessions[idx];
+      if (!session) continue;
+      if (res.status === 'fulfilled' && res.value) {
+        assignedIds.push(session.session_id);
+      }
+    }
+    return assignedIds;
   }, []);
 
   return {
