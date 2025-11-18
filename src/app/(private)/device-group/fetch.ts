@@ -28,3 +28,17 @@ export async function createDeviceGroup(groupName: string): Promise<{ success: b
   revalidateTag('device-groups');
   return { success: true, data };
 }
+
+// 端末名更新API
+export async function updateDeviceName(deviceId: number, managementNumber: string): Promise<{ success: boolean; error?: string }> {
+  const data = await callAuthenticatedApi<{ success: boolean; error?: string }>({
+    method: 'PUT',
+    url: API_ENDPOINTS.ADMIN.UPDATE_DEVICE_NAME(deviceId),
+    body: { management_number: managementNumber },
+  });
+  if (!data || data.success === false) {
+    return { success: false, error: data?.error || 'Failed to update device name' };
+  }
+  revalidateTag('device-groups');
+  return { success: true };
+}

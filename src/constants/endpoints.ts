@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
     UPDATE_GROUP_NAME: (id: number) => `/api/admin/groups/${id}`,
     DEVICE_ASSIGN: '/api/admin/devices/assign/groups',
     DEVICE_UNASSIGNED: '/api/admin/devices/unassigned',
+    UPDATE_DEVICE_NAME: (deviceId: number) => `/api/admin/devices/${deviceId}`,
     // マッチメイキング関連
     MATCHMAKING_GROUP_QUEUE: (groupId: number) => `/api/admin/matchmaking/groups/${groupId}/queue`,
     // セッション関連

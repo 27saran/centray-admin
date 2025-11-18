@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteGroup, assignDevicesToGroup, updateGroupName } from '@/app/(private)/device-group/edit/[id]/fetch';
+import { updateDeviceName } from '@/app/(private)/device-group/fetch';
 import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
 import type { GroupDetailResponse, DeviceData } from '@/types/device-group';
 
@@ -20,10 +21,56 @@ export function useDeviceGroupEdit({ groupDetail, unassignedDevices }: UseDevice
   const [isEditingName, setIsEditingName] = useState(false);
   const [editingName, setEditingName] = useState(groupDetail.name);
 
+  // 端末名編集
+  const [editingDeviceId, setEditingDeviceId] = useState<number | null>(null);
+  const [editingDeviceName, setEditingDeviceName] = useState('');
+
   // デバイス追加
   const handleAddDevice = (device: DeviceData) => {
     setUnAssignedDevices(prev => prev.filter(d => d.device_id !== device.device_id));
     setAssignedDevices(prev => [...prev, device]);
+  };
+
+  // 端末名編集開始
+  const startEdit = (deviceId: number, currentName: string) => {
+    setEditingDeviceId(deviceId);
+    setEditingDeviceName(currentName);
+  };
+
+  // 端末名編集キャンセル
+  const cancelEdit = () => {
+    setEditingDeviceId(null);
+    setEditingDeviceName('');
+  };
+
+  // 端末名保存
+  const saveEdit = async () => {
+    if (editingDeviceId == null) return;
+    const name = editingDeviceName.trim();
+    if (name === '') {
+      alert('端末名を入力してください');
+      return;
+    }
+    try {
+      const result = await updateDeviceName(editingDeviceId, name);
+      if (result.success) {
+        alert('端末名を更新しました');
+        setAssignedDevices(prev =>
+          prev.map(d => d.device_id === editingDeviceId ? { ...d, management_number: name } : d)
+        );
+        setUnAssignedDevices(prev =>
+          prev.map(d => d.device_id === editingDeviceId ? { ...d, management_number: name } : d)
+        );
+        setEditingDeviceId(null);
+        setEditingDeviceName('');
+      } else {
+        await checkAuth();
+        alert(result.error || '端末名の更新に失敗しました');
+      }
+    } catch (e) {
+      console.error('Update device name error:', e);
+      alert('端末名の更新中にエラーが発生しました');
+    }
   };
 
   // デバイス解除
@@ -132,6 +179,9 @@ export function useDeviceGroupEdit({ groupDetail, unassignedDevices }: UseDevice
     isEditingName,
     editingName,
     setEditingName,
+    editingDeviceId,
+    editingDeviceName,
+    setEditingDeviceName,
     handleAddDevice,
     handleRemoveDevice,
     handleSaveChanges,
@@ -140,5 +190,8 @@ export function useDeviceGroupEdit({ groupDetail, unassignedDevices }: UseDevice
     handleStartEditName,
     handleCancelEditName,
     handleSaveName,
+    startEdit,
+    cancelEdit,
+    saveEdit,
   };
 }
