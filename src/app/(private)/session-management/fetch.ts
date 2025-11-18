@@ -23,3 +23,16 @@ export async function getGameServerInfos(sessionId: number): Promise<unknown[]> 
   const infos = data?.game_server_infos;
   return Array.isArray(infos) ? infos : [];
 }
+
+// アクティブなゲームサーバ割当のsession_id一覧を取得
+export const getActiveAssignedSessionIds = async (): Promise<number[]> => {
+  const data = await callAuthenticatedApi<{ active_game_server_infos?: { session_id?: number | string }[] }>({
+    method: 'GET',
+    url: API_ENDPOINTS.ADMIN.GET_ACTIVE_GAME_SERVER_INFOS,
+    tags: ['game-server-infos'],
+  });
+  const infos = data?.active_game_server_infos ?? [];
+  return Array.from(new Set(infos
+    .map((i) => Number(i.session_id))
+  ));
+};

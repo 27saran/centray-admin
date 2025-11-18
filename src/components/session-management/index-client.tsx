@@ -19,11 +19,16 @@ export function SessionManagementClient({ sessions }: SessionManagementProps) {
   const [assignedIds, setAssignedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       if (!sessionList.length) return;
       const ids = await getAssignedSessionIds(sessionList);
+      if (cancelled) return; // 古いリクエスト捨てる
       setAssignedIds(new Set(ids));
     })();
+    return () => {
+      cancelled = true;
+    };
   }, [sessionList, getAssignedSessionIds]);
 
   return (

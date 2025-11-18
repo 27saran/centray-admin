@@ -21,6 +21,7 @@ export const API_ENDPOINTS = {
     MATCHMAKING_SESSION_DELETE: (sessionId: number, groupId: number) => `/api/admin/matchmaking/sessions/${sessionId}/groups/${groupId}`,
     // ゲーム関連
     GET_GAME_SERVER_INFOS: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}`,
+    GET_ACTIVE_GAME_SERVER_INFOS: '/api/admin/game-server-info/active',
     CHANGE_GAME_STATE: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/change-game-state`,
     GET_PHASE_PROGRESS: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/phase-progress-broadcast`,
     // SSE関連
