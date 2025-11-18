@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Group, MonitorSpeaker, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { logout } from '@/app/(private)/auth/fetch';
+import { useSession } from 'next-auth/react';
 import {
   Sidebar,
   SidebarContent,
@@ -35,8 +36,14 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { data: session } = useSession();
+  const [mounted, setMounted] = useState(false);
   const { setOpen, setOpenMobile, isMobile } = useSidebar();
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -66,7 +73,12 @@ export function AppSidebar() {
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarMenu className="mt-8">
+              {mounted && (
+                <div className="px-2 pt-2 text-sm text-muted-foreground">
+                  {session?.user?.email}
+                </div>
+              )}
+              <SidebarMenu className="mt-4">
                 {items.map((item) => {
                   if (item.title === 'ログアウト') {
                     return (
