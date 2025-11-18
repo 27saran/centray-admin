@@ -27,6 +27,12 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
     handleStartEditName,
     handleCancelEditName,
     handleSaveName,
+    editingDeviceId,
+    editingDeviceName,
+    setEditingDeviceName,
+    startEdit,
+    cancelEdit,
+    saveEdit,
   } = useDeviceGroupEdit({ groupDetail, unassignedDevices });
 
   return (
@@ -72,7 +78,32 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
             <ul className="space-y-2">
               {assignedDevices.map((device) => (
                 <li key={`assigned-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
-                  <span>{device.management_number}</span>
+                  <div className="flex items-center gap-2">
+                    {editingDeviceId === device.device_id ? (
+                      <>
+                        <Input
+                          value={editingDeviceName}
+                          onChange={(e) => setEditingDeviceName(e.target.value)}
+                          className="max-w-xs"
+                          placeholder="端末名を入力"
+                          autoFocus
+                        />
+                        <Button size="sm" variant="outline" onClick={saveEdit}>
+                          <Check className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={cancelEdit}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <span>{device.management_number}</span>
+                        <Button size="sm" variant="ghost" onClick={() => startEdit(device.device_id, device.management_number)}>
+                          <SquarePen className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
                   <Button variant="outline" size="sm" onClick={() => handleRemoveDevice(device)}>
                     解除
                   </Button>
@@ -90,7 +121,32 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
             <ul className="space-y-2">
               {unAssignedDevices.map((device) => (
                 <li key={`available-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
-                  <span>{device.management_number}</span>
+                  <div className="flex items-center gap-2">
+                    {editingDeviceId === device.device_id ? (
+                      <>
+                        <Input
+                          value={editingDeviceName}
+                          onChange={(e) => setEditingDeviceName(e.target.value)}
+                          className="max-w-xs"
+                          placeholder="端末名を入力"
+                          autoFocus
+                        />
+                        <Button size="sm" variant="outline" onClick={saveEdit}>
+                          <Check className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={cancelEdit}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <span>{device.management_number}</span>
+                        <Button size="sm" variant="ghost" onClick={() => startEdit(device.device_id, device.management_number)}>
+                          <SquarePen className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
                   <Button variant="outline" size="sm" onClick={() => handleAddDevice(device)}>
                     追加
                   </Button>
