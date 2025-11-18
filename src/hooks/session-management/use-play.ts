@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { endSession, forceEndSession, fetchPhaseProgress } from '@/app/(private)/session-management/play/fetch';
+import { forceEndSession, fetchPhaseProgress } from '@/app/(private)/session-management/play/fetch';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import { connectSSE } from '@/lib/sse';
 import { PlayerStatusData, PlayerStatusSSEData } from '@/types/player-status';
@@ -128,7 +128,6 @@ export function usePlay() {
         // ゲーム終了判定
         if (phaseData.game_state === GAME_STATE.FINISH || phaseData.game_state === GAME_STATE.FORCE_FINISH) {
           setIsGameFinished(true);
-          console.log('ゲーム終了を検知しました', { game_state: phaseData.game_state });
         }
       },
       (error) => {
@@ -166,6 +165,7 @@ export function usePlay() {
       setConnectionStatus('connecting');
     };
   }, [initializePlayerStatusConnection, initializePhaseProgressConnection]);
+ 
 
   // 再接続ボタン
   const handleReconnect = useCallback(async () => {
@@ -176,15 +176,6 @@ export function usePlay() {
     initializePhaseProgressConnection();
     (document.activeElement as HTMLElement)?.blur();
   }, [initializePlayerStatusConnection, initializePhaseProgressConnection]);
-
-  const handleSessionEnd = async () => {
-    if (window.confirm('セッションを終了します。よろしいですか？')) {
-      if (sessionId) {
-        await endSession(sessionId);
-      }
-      router.push('/session-management');
-    }
-  };
 
   const handleSessionForceEnd = async () => {
     if (window.confirm('セッションが緊急停止します。本当によろしいですか？')) {
@@ -204,7 +195,6 @@ export function usePlay() {
     groupName,
     currentPhaseData: null,
     isSessionComplete: false,
-    handleSessionEnd,
     handleSessionForceEnd,
     playerStatusData,
     connectionStatus,

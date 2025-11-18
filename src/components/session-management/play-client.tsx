@@ -4,11 +4,13 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { usePlay } from '@/hooks/session-management/use-play';
 import { PLAYER_STATUS_CODE, PLAYER_STATUS } from '@/constants/enum';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export function PlayClient() {
   const {
     handleSessionForceEnd,
-    handleSessionEnd,
     playerStatusData,
     connectionStatus,
     statusMessage,
@@ -18,13 +20,22 @@ export function PlayClient() {
     errorCount,
     isInitialDataReceived,
     isGameFinished,
-  } = usePlay();  return (
+  } = usePlay();
+  const [showFinishedModal, setShowFinishedModal] = useState(false);
+
+  useEffect(() => {
+    if (isGameFinished) {
+      setShowFinishedModal(true);
+    }
+  }, [isGameFinished]);
+
+  return (
     <Card className="w-full">
       <CardContent className="flex flex-col items-center">
         <Button
             className="flex-1 bg-red-600 hover:bg-red-700 mb-4"
             onClick={handleSessionForceEnd}
-            disabled={connectionStatus === 'connecting'}
+            disabled={connectionStatus === 'connecting' || isGameFinished}
           >
             セッション全体の緊急停止
         </Button>
@@ -82,12 +93,10 @@ export function PlayClient() {
           </div>
         </div>
         <div className="flex mt-4">
-          <Button
-            className="flex-1"
-            onClick={handleSessionEnd}
-            disabled={!isGameFinished}
-          >
-            セッション終了
+          <Button className="flex-1" asChild>
+            <Link href="/session-management">
+              一覧へ戻る
+            </Link>
           </Button>
         </div>
       </CardContent>
@@ -100,6 +109,21 @@ export function PlayClient() {
           {connectionStatus === 'connecting' ? '接続中...' : '再接続'}
         </Button>
       </CardFooter>
+      <Dialog open={showFinishedModal} onOpenChange={setShowFinishedModal}>
+        <DialogContent className="py-10 sm:py-10 min-h-50">
+          <DialogHeader>
+            <DialogTitle>セッションが完了しました</DialogTitle>
+            <DialogDescription>
+              一覧へ戻って新しいセッションを開始してください。
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button asChild>
+              <Link href="/session-management">一覧へ戻る</Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
