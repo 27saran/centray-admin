@@ -62,8 +62,8 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
               </Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <span>{groupDetail.name}</span>
+            <div className="flex items-center gap-2 w-full">
+              <span className="break-all whitespace-pre-wrap flex-1 min-w-0">{groupDetail.name}</span>
               <Button size="sm" variant="ghost" onClick={handleStartEditName}>
                 <SquarePen className="h-4 w-4" />
               </Button>
@@ -78,7 +78,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
             <ul className="space-y-2">
               {assignedDevices.map((device) => (
                 <li key={`assigned-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
                     {editingDeviceId === device.device_id ? (
                       <>
                         <Input
@@ -97,7 +97,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
                       </>
                     ) : (
                       <>
-                        <span>{device.management_number}</span>
+                        <span className="break-all whitespace-pre-wrap">{device.management_number}</span>
                         <Button size="sm" variant="ghost" onClick={() => startEdit(device.device_id, device.management_number)}>
                           <SquarePen className="h-4 w-4" />
                         </Button>
@@ -121,7 +121,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
             <ul className="space-y-2">
               {unAssignedDevices.map((device) => (
                 <li key={`available-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
                     {editingDeviceId === device.device_id ? (
                       <>
                         <Input
@@ -140,7 +140,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
                       </>
                     ) : (
                       <>
-                        <span>{device.management_number}</span>
+                        <span className="break-all whitespace-pre-wrap">{device.management_number}</span>
                         <Button size="sm" variant="ghost" onClick={() => startEdit(device.device_id, device.management_number)}>
                           <SquarePen className="h-4 w-4" />
                         </Button>
