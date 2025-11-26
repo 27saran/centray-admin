@@ -14,7 +14,9 @@ export function useMatchmaking(groupId?: number) {
   const { data: session, status } = useSession();
   const { checkAuth } = useCheckAuth();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const deletingRef = useRef(false);
   const [sessionStatus, setSessionStatus] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const [matchmakingQueue, setMatchmakingQueue] = useState<MatchmakingDataResponse[]>([]);
   const [statusMessage, setStatusMessage] = useState('マッチメイキング情報に接続中...');
@@ -94,6 +96,33 @@ export function useMatchmaking(groupId?: number) {
     (document.activeElement as HTMLElement)?.blur();
   }, [initializeMatchmakingConnection]);
 
+  // セッション削除ボタン
+  const handleSessionDelete = useCallback(async () => {
+    if (deletingRef.current) return;
+    const sessionId = searchParams.get('session_id');
+    if (!groupId || !sessionId) return;
+    const confirmed = window.confirm('このセッションを削除します。\nよろしいですか？');
+    if (!confirmed) return;
+    try {
+      deletingRef.current = true;
+      setDeleting(true);
+      const result = await deleteMatchmakingSession(Number(sessionId), groupId);
+      if (!result.success) {
+        alert(result.error || 'セッション削除に失敗しました');
+        return;
+      }
+      // SSE切断
+      abortControllerRef.current?.abort();
+      router.push('/session-management');
+    } catch (e) {
+      console.error('セッション削除エラー:', e);
+      alert('セッション削除に失敗しました');
+    } finally {
+      deletingRef.current = false;
+      setDeleting(false);
+    }
+  }, [groupId, searchParams, router]);
+
   // セッション開始ボタン
   const handleSessionFinish = async () => {
     if (window.confirm('セッションを開始します。\nよろしいですか？')) {
@@ -140,7 +169,9 @@ export function useMatchmaking(groupId?: number) {
     statusMessage,
     connectionStatus,
     sessionStatus,
+    deleting,
     handleSessionFinish,
     handleReconnect,
+    handleSessionDelete,
   };
 }

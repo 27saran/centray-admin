@@ -85,6 +85,7 @@ export async function callAuthenticatedApi<T>(options: ApiCallOptions): Promise<
 
     const response = await fetch(getBaseApiUrl(options.url), fetchOptions);
     if (!response.ok) return null;
+    if (response.status === 204) return {} as T; // 204 No Contentの場合は空のオブジェクトを返す
     return await response.json();
   } catch (error) {
     console.error('API call failed:', error);
