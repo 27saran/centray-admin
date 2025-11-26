@@ -52,8 +52,8 @@ export async function deleteMatchmakingSession(sessionId: number, groupId: numbe
     method: 'DELETE',
     url: API_ENDPOINTS.ADMIN.MATCHMAKING_SESSION_DELETE(sessionId, groupId),
   });
-  if (data && data.success === false) {
-    return { success: false, error: data?.error || 'Failed to delete matchmaking session' };
+  if (!data || data.success === false) {
+    return { success: false, error: 'Failed to delete matchmaking session' };
   }
   revalidateTag('sessions');
   return { success: true };

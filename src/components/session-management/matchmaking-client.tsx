@@ -10,7 +10,7 @@ type MatchmakingClientProps = {
 };
 
 export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps) {
-  const { matchmakingQueue, statusMessage, connectionStatus, sessionStatus, handleSessionFinish, handleReconnect, handleSessionDelete } = useMatchmaking(groupId);
+  const { matchmakingQueue, statusMessage, connectionStatus, sessionStatus, deleting, handleSessionFinish, handleReconnect, handleSessionDelete } = useMatchmaking(groupId);
 
   return (
     <Card className="w-full">
@@ -57,9 +57,9 @@ export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps
         <Button
           onClick={handleSessionDelete}
           variant="destructive"
-          disabled={sessionStatus}
+          disabled={sessionStatus || deleting}
         >
-          削除
+          {deleting ? '削除中...' : '削除'}
         </Button>
       </CardFooter>
     </Card>
