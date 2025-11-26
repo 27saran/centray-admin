@@ -6,15 +6,17 @@ import { useMatchmaking } from '@/hooks/session-management/use-matchmaking';
 
 type MatchmakingClientProps = {
   groupId?: number;
+  groupName?: string;
 };
 
-export function MatchmakingClient({ groupId }: MatchmakingClientProps) {
-  const { matchmakingQueue, statusMessage, connectionStatus, sessionStatus, handleSessionFinish, handleReconnect } = useMatchmaking(groupId);
+export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps) {
+  const { matchmakingQueue, statusMessage, connectionStatus, sessionStatus, handleSessionFinish, handleReconnect, handleSessionDelete } = useMatchmaking(groupId);
 
   return (
     <Card className="w-full">
       <CardContent className="flex flex-col items-center pt-2">
-        <p className="text-lg font-semibold mb-2">マッチメイキング中...</p>
+        <p className="text-lg font-semibold">{groupName ?? (groupId ? `#${groupId}` : '不明なグループ')}</p>
+        <p className="text-base mb-2">マッチメイキング中...</p>
         <p className="text-sm text-muted-foreground mb-2">{statusMessage}</p>
         <div className="w-full h-60 overflow-y-auto border rounded-md p-2 mb-8">
           {matchmakingQueue.length === 0 ? (
@@ -52,7 +54,14 @@ export function MatchmakingClient({ groupId }: MatchmakingClientProps) {
         >
           {connectionStatus === 'connecting' ? '接続中...' : '再接続'}
         </Button>
+        <Button
+          onClick={handleSessionDelete}
+          variant="destructive"
+          disabled={sessionStatus}
+        >
+          削除
+        </Button>
       </CardFooter>
     </Card>
   );
-} 
+}

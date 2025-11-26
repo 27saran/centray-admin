@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Plus, RectangleGoggles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ActiveSession } from '@/types/session-management';
 import { formatDate } from '@/lib/format';
 import { useIndex } from '@/hooks/session-management/use-index';
@@ -15,7 +15,7 @@ type SessionManagementProps = {
 export function SessionManagementClient({ sessions }: SessionManagementProps) {
   const router = useRouter();
   const { openSession, getAssignedSessionIds } = useIndex();
-  const sessionList = sessions || [];
+  const sessionList = useMemo(() => sessions ?? [], [sessions]);
   const [assignedIds, setAssignedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {

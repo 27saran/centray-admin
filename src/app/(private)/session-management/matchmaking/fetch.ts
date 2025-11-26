@@ -3,6 +3,7 @@ import { callAuthenticatedApi } from '@/lib/api';
 import { SessionFinishResponse, MatchmakingDataResponse } from '@/types/session-management';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import { revalidateTag } from 'next/cache';
+import type { GroupDetailResponse } from '@/types/device-group';
 
 export async function getCurrentMatchmakingQueue(groupId: number): Promise<{ success: boolean; queue: MatchmakingDataResponse[]; error?: string }> {
   const data = await callAuthenticatedApi<{ queue: MatchmakingDataResponse[] }>({
@@ -14,6 +15,14 @@ export async function getCurrentMatchmakingQueue(groupId: number): Promise<{ suc
   }
   const queue = Array.isArray(data.queue) ? data.queue : [];
   return { success: true, queue };
+}
+
+export async function getGroupNameById(groupId: number): Promise<string | undefined> {
+  const group = await callAuthenticatedApi<GroupDetailResponse>({
+    method: 'GET',
+    url: API_ENDPOINTS.ADMIN.GROUP_DETAIL(groupId),
+  });
+  return group?.name;
 }
 
 export async function SessionFinish(sessionId: number, groupId: number): Promise<{ success: boolean; message?: string; error?: string; result?: SessionFinishResponse }> {
@@ -43,7 +52,7 @@ export async function deleteMatchmakingSession(sessionId: number, groupId: numbe
     method: 'DELETE',
     url: API_ENDPOINTS.ADMIN.MATCHMAKING_SESSION_DELETE(sessionId, groupId),
   });
-  if (!data || data.success === false) {
+  if (data && data.success === false) {
     return { success: false, error: data?.error || 'Failed to delete matchmaking session' };
   }
   revalidateTag('sessions');
