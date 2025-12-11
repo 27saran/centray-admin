@@ -35,7 +35,9 @@ export function DeviceGroupClient({ deviceGroups }: DeviceGroupClientProps) {
                     <TableCell colSpan={2} className="text-muted-foreground">登録端末はありません</TableCell>
                   </TableRow>
                 ) : (
-                  group.devices.map((device) => (
+                  [...group.devices]
+                    .sort((a, b) => a.management_number.localeCompare(b.management_number, 'ja', { numeric: true }))
+                    .map((device) => (
                     <TableRow key={device.device_id}>
                       <TableCell colSpan={2}>{device.management_number}</TableCell>
                     </TableRow>
