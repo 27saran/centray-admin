@@ -15,6 +15,8 @@ type MatchmakingClientProps = {
 
 export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps) {
   const { matchmakingQueue, statusMessage, connectionStatus, sessionStatus, deleting, removingPlayerId, handleSessionFinish, handleReconnect, handleSessionDelete, handleRemoveFromQueue } = useMatchmaking(groupId);
+  // マッチメイキング待機は11台以上でも参加可能（運用上、11台目が混ざるケースがある）
+  // ただ「セッション開始」は10台までに制限したいので、10を超えたら開始ボタンを無効化する
   const isQueueFull = matchmakingQueue.length > MATCHMAKING_QUEUE_MAX_PLAYERS;
   const sortedQueue = useMemo(
     () => [...matchmakingQueue].sort(compareByManagementNumber),
