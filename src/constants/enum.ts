@@ -21,3 +21,6 @@ export const PLAYER_STATUS_CODE = {
   DISCONNECTED: 2,
   TIMEOUT: 3,
 } as const;
+
+// マッチメイキング開始可能上限
+export const MATCHMAKING_QUEUE_MAX_PLAYERS = 10 as const;

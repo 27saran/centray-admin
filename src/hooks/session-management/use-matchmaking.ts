@@ -2,7 +2,7 @@ import { useEffect, useCallback, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { MatchmakingSSEEventResponse, MatchmakingDataResponse } from '@/types/session-management';
-import { SessionFinish, deleteMatchmakingSession, getCurrentMatchmakingQueue } from '@/app/(private)/session-management/matchmaking/fetch';
+import { removePlayerFromMatchmakingQueue, SessionFinish, deleteMatchmakingSession, getCurrentMatchmakingQueue } from '@/app/(private)/session-management/matchmaking/fetch';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import { connectSSE } from '@/lib/sse';
 import { useCheckAuth } from '@/hooks/auth/use-auth-guard';
@@ -17,6 +17,7 @@ export function useMatchmaking(groupId?: number) {
   const deletingRef = useRef(false);
   const [sessionStatus, setSessionStatus] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [removingPlayerId, setRemovingPlayerId] = useState<number | null>(null);
 
   const [matchmakingQueue, setMatchmakingQueue] = useState<MatchmakingDataResponse[]>([]);
   const [statusMessage, setStatusMessage] = useState('マッチメイキング情報に接続中...');
@@ -164,14 +165,43 @@ export function useMatchmaking(groupId?: number) {
     }
   };
 
+  // マッチング解除ボタン
+  const handleRemoveFromQueue = useCallback(async (player: MatchmakingDataResponse) => {
+    if (!groupId) return;
+    if (removingPlayerId !== null) return;
+
+    const confirmed = window.confirm(`マッチング解除します\n対象: ${player.management_number}\n本当によろしいですか？`);
+    if (!confirmed) {
+      (document.activeElement as HTMLElement | null)?.blur?.();
+      return;
+    }
+
+    try {
+      setRemovingPlayerId(player.player_id);
+      await checkAuth();
+      const res = await removePlayerFromMatchmakingQueue(groupId, player.player_id);
+      if (!res.success) {
+        alert(res.error || 'マッチング解除に失敗しました');
+        return;
+      }
+    } catch (e) {
+      console.error('マッチング解除エラー:', e);
+      alert('マッチング解除に失敗しました');
+    } finally {
+      setRemovingPlayerId(null);
+    }
+  }, [groupId, removingPlayerId, checkAuth, fetchCurrentMatchmakingQueue]);
+
   return {
     matchmakingQueue,
     statusMessage,
     connectionStatus,
     sessionStatus,
     deleting,
+    removingPlayerId,
     handleSessionFinish,
     handleReconnect,
     handleSessionDelete,
+    handleRemoveFromQueue,
   };
 }

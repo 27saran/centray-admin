@@ -2,7 +2,11 @@
 
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { MATCHMAKING_QUEUE_MAX_PLAYERS } from '@/constants/enum';
 import { useMatchmaking } from '@/hooks/session-management/use-matchmaking';
+import { Ban } from 'lucide-react';
+import { useMemo } from 'react';
+import { compareByManagementNumber } from '@/lib/sort';
 
 type MatchmakingClientProps = {
   groupId?: number;
@@ -10,7 +14,12 @@ type MatchmakingClientProps = {
 };
 
 export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps) {
-  const { matchmakingQueue, statusMessage, connectionStatus, sessionStatus, deleting, handleSessionFinish, handleReconnect, handleSessionDelete } = useMatchmaking(groupId);
+  const { matchmakingQueue, statusMessage, connectionStatus, sessionStatus, deleting, removingPlayerId, handleSessionFinish, handleReconnect, handleSessionDelete, handleRemoveFromQueue } = useMatchmaking(groupId);
+  const isQueueFull = matchmakingQueue.length > MATCHMAKING_QUEUE_MAX_PLAYERS;
+  const sortedQueue = useMemo(
+    () => [...matchmakingQueue].sort(compareByManagementNumber),
+    [matchmakingQueue]
+  );
 
   return (
     <Card className="w-full">
@@ -18,6 +27,12 @@ export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps
         <p className="text-lg font-semibold">{groupName ?? (groupId ? `#${groupId}` : '不明なグループ')}</p>
         <p className="text-base mb-2">マッチメイキング中...</p>
         <p className="text-sm text-muted-foreground mb-2">{statusMessage}</p>
+        {isQueueFull && (
+          <div className="text-xs text-destructive mb-2 text-center leading-relaxed">
+            <div>待機中が{MATCHMAKING_QUEUE_MAX_PLAYERS}台を超えています。</div>
+            <div className='mt-1'>使用しないG-SCOPEを<span className="inline-flex items-center gap-1"><Ban className="h-3 w-3" /></span>ボタンで解除してください</div>
+          </div>
+        )}
         <div className="w-full h-60 overflow-y-auto border rounded-md p-2 mb-8">
           {matchmakingQueue.length === 0 ? (
             <div className="flex items-center justify-center h-full text-gray-500">
@@ -28,12 +43,21 @@ export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps
             </div>
           ) : (
             <div className="space-y-2">
-              {matchmakingQueue.map((player) => (
+              {sortedQueue.map((player) => (
                 <div
                   key={player.player_id}
                   className="flex justify-between items-center p-2 bg-gray-50 rounded border"
                 >
                   <div className="font-medium">{player.management_number}</div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 text-destructive/60 bg-destructive/10 hover:bg-destructive/15 hover:text-destructive/80 focus-visible:text-destructive/80"
+                    onClick={() => handleRemoveFromQueue(player)}
+                    disabled={sessionStatus || removingPlayerId !== null || connectionStatus !== 'connected'}
+                  >
+                    <Ban />
+                  </Button>
                 </div>
               ))}
             </div>
@@ -43,7 +67,7 @@ export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps
       <CardFooter className="flex justify-center gap-2">
         <Button
           onClick={handleSessionFinish}
-          disabled={matchmakingQueue.length === 0 || connectionStatus !== 'connected' || sessionStatus}
+          disabled={matchmakingQueue.length === 0 || isQueueFull || connectionStatus !== 'connected' || sessionStatus || removingPlayerId !== null}
         >
           {sessionStatus ? 'セッション開始中...' : 'セッション開始'}
         </Button>

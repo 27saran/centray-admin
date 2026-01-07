@@ -58,3 +58,14 @@ export async function deleteMatchmakingSession(sessionId: number, groupId: numbe
   revalidateTag('sessions');
   return { success: true };
 }
+
+export async function removePlayerFromMatchmakingQueue(groupId: number, playerId: number): Promise<{ success: boolean; error?: string }> {
+  const data = await callAuthenticatedApi<{ success: boolean; error?: string }>({
+    method: 'DELETE',
+    url: API_ENDPOINTS.ADMIN.MATCHMAKING_GROUP_KICK_PLAYER(groupId, playerId),
+  });
+  if (!data || data.success === false) {
+    return { success: false, error: data?.error || 'Failed to remove player from matchmaking queue' };
+  }
+  return { success: true };
+}
