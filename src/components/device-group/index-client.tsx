@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { useDeviceGroupList } from '@/hooks/device-group/use-device-group-index';
+import { compareByManagementNumber } from '@/lib/sort';
 import type { GroupDetailResponse } from '@/types/device-group';
 
 type DeviceGroupClientProps = {
@@ -36,7 +37,7 @@ export function DeviceGroupClient({ deviceGroups }: DeviceGroupClientProps) {
                   </TableRow>
                 ) : (
                   [...group.devices]
-                    .sort((a, b) => a.management_number.localeCompare(b.management_number, 'ja', { numeric: true }))
+                    .sort(compareByManagementNumber)
                     .map((device) => (
                     <TableRow key={device.device_id}>
                       <TableCell colSpan={2}>{device.management_number}</TableCell>

@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { usePlay } from '@/hooks/session-management/use-play';
 import { PLAYER_STATUS_CODE, PLAYER_STATUS } from '@/constants/enum';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { compareByManagementNumber } from '@/lib/sort';
 
 export function PlayClient() {
   const {
@@ -22,6 +23,11 @@ export function PlayClient() {
     isGameFinished,
   } = usePlay();
   const [showFinishedModal, setShowFinishedModal] = useState(false);
+
+  const sortedPlayerStatusData = useMemo(
+    () => [...playerStatusData].sort(compareByManagementNumber),
+    [playerStatusData]
+  );
 
   useEffect(() => {
     if (isGameFinished) {
@@ -58,7 +64,7 @@ export function PlayClient() {
             </div>
           ) : (
             <ul>
-              {playerStatusData.map((player) => (
+              {sortedPlayerStatusData.map((player) => (
                 <li key={player.device_id} className="flex items-center p-2 border-b last:border-b-0">
                   <span>{player.management_number}</span>
                   <span className={`ml-auto text-sm ${

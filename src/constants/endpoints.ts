@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
     UPDATE_DEVICE_NAME: (deviceId: number) => `/api/admin/devices/${deviceId}`,
     // マッチメイキング関連
     MATCHMAKING_GROUP_QUEUE: (groupId: number) => `/api/admin/matchmaking/groups/${groupId}/queue`,
+    MATCHMAKING_GROUP_KICK_PLAYER: (groupId: number, playerId: number) => `/api/admin/matchmaking/groups/${groupId}/kick/${playerId}`,
     // セッション関連
     MATCHMAKING_SESSIONS: '/api/admin/matchmaking/sessions',
     MATCHMAKING_SESSIONS_ACTIVE: '/api/admin/matchmaking/sessions/active',

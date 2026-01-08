@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { useDeviceGroupEdit } from '@/hooks/device-group/use-device-group-edit';
 import type { GroupDetailResponse, DeviceData } from '@/types/device-group';
 import { SquarePen, Check, X } from 'lucide-react';
+import { useMemo } from 'react';
+import { compareByManagementNumber } from '@/lib/sort';
 
 type EditDeviceGroupClientProps = {
   groupDetail: GroupDetailResponse;
@@ -34,6 +36,16 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
     cancelEdit,
     saveEdit,
   } = useDeviceGroupEdit({ groupDetail, unassignedDevices });
+
+  const sortedAssignedDevices = useMemo(
+    () => [...assignedDevices].sort(compareByManagementNumber),
+    [assignedDevices]
+  );
+
+  const sortedUnAssignedDevices = useMemo(
+    () => [...unAssignedDevices].sort(compareByManagementNumber),
+    [unAssignedDevices]
+  );
 
   return (
     <Card className="max-w-2xl mx-auto">
@@ -76,7 +88,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
         <div className="h-60 overflow-y-auto border rounded-md p-2 mb-8">
           {assignedDevices.length > 0 ? (
             <ul className="space-y-2">
-              {assignedDevices.map((device) => (
+              {sortedAssignedDevices.map((device) => (
                 <li key={`assigned-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     {editingDeviceId === device.device_id ? (
@@ -119,7 +131,7 @@ export function EditDeviceGroupClient({ groupDetail, unassignedDevices }: EditDe
         <div className="h-60 overflow-y-auto border rounded-md p-2">
           {unAssignedDevices.length > 0 ? (
             <ul className="space-y-2">
-              {unAssignedDevices.map((device) => (
+              {sortedUnAssignedDevices.map((device) => (
                 <li key={`available-${device.device_id}`} className="flex items-center justify-between p-2 border rounded-md">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     {editingDeviceId === device.device_id ? (
