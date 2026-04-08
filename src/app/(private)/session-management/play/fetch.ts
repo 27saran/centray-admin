@@ -14,10 +14,10 @@ export async function fetchPhaseProgress(session_id: number) {
 }
 
 // ゲーム正常終了
-export async function finishSession(session_id: number, group_id: number) {
+export async function finishSession(session_id: number) {
   return await callAuthenticatedApi({
     method: 'DELETE',
-    url: API_ENDPOINTS.ADMIN.MATCHMAKING_SESSION_DELETE(session_id, group_id),
+    url: API_ENDPOINTS.ADMIN.MATCHMAKING_SESSION_DELETE(session_id),
   });
 }
 

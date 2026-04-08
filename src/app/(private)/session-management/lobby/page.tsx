@@ -1,12 +1,5 @@
-import { LobbyClient } from '@/components/session-management/lobby-client';
-import { getAvailableGroups } from './fetch';
+import { redirect } from 'next/navigation';
 
-export default async function SessionManagementPage() {
-  const data = await getAvailableGroups();
-
-  return (
-    <div className="flex items-center min-h-screen">
-      <LobbyClient groups={data} />
-    </div>
-  );
+export default function LobbyPage() {
+  redirect('/session-management/matchmaking');
 }

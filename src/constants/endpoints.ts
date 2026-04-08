@@ -14,13 +14,12 @@ export const API_ENDPOINTS = {
     DEVICE_UNASSIGNED: '/api/admin/devices/unassigned',
     UPDATE_DEVICE_NAME: (deviceId: number) => `/api/admin/devices/${deviceId}`,
     // マッチメイキング関連
-    MATCHMAKING_GROUP_QUEUE: (groupId: number) => `/api/admin/matchmaking/groups/${groupId}/queue`,
-    MATCHMAKING_GROUP_KICK_PLAYER: (groupId: number, playerId: number) => `/api/admin/matchmaking/groups/${groupId}/kick/${playerId}`,
+    MATCHMAKING_QUEUE: '/api/admin/matchmaking/queue',
+    MATCHMAKING_KICK_PLAYER: (playerId: number) => `/api/admin/matchmaking/kick/${playerId}`,
+    MATCHMAKING_START: '/api/admin/matchmaking/start',
     // セッション関連
-    MATCHMAKING_SESSIONS: '/api/admin/matchmaking/sessions',
     MATCHMAKING_SESSIONS_ACTIVE: '/api/admin/matchmaking/sessions/active',
-    MATCHMAKING_SESSION_FINISH: (sessionId: number) => `/api/admin/matchmaking/sessions/${sessionId}/finish`,
-    MATCHMAKING_SESSION_DELETE: (sessionId: number, groupId: number) => `/api/admin/matchmaking/sessions/${sessionId}/groups/${groupId}`,
+    MATCHMAKING_SESSION_DELETE: (sessionId: number) => `/api/admin/matchmaking/sessions/${sessionId}`,
     // ゲーム関連
     GET_GAME_SERVER_INFOS: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}`,
     GET_ACTIVE_GAME_SERVER_INFOS: '/api/admin/game-server-info/active',
@@ -28,10 +27,12 @@ export const API_ENDPOINTS = {
     GET_PHASE_PROGRESS: (sessionId: number) => `/api/admin/game-server-info/session/${sessionId}/phase-progress-broadcast`,
     // SSE関連
     SSE: {
-      MATCHMAKING: (groupId: number) => `/api/admin/sse?stream=matchmaking:${groupId}`,
-      PLAYER_STATUS: (groupId: number) => `/api/admin/sse?stream=player_status:${groupId}`,
+      MATCHMAKING: (sessionId: number) => `/api/admin/sse?stream=matchmaking:${sessionId}`,
+      PLAYER_STATUS: (sessionId: number) => `/api/admin/sse?stream=player_status:${sessionId}`,
       PHASE_STATUS: (sessionId: number) =>`/api/admin/sse?stream=phase_progress:${sessionId}`,
     },
+    // セッション作成
+    CREATE_SESSION: '/api/admin/matchmaking/sessions',
   },
   // NextAuth関連
   AUTH: {

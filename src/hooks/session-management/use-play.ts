@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { forceEndSession, fetchPhaseProgress } from '@/app/(private)/session-management/play/fetch';
@@ -17,11 +17,20 @@ export function usePlay() {
   const { checkAuth } = useCheckAuth();
   const abortControllerRef = useRef<AbortController | null>(null);
   const phaseAbortControllerRef = useRef<AbortController | null>(null);
-  const groupName = searchParams.get('group') ?? '不明なグループ';
   const sessionIdParam = searchParams.get('session_id');
   const sessionId = sessionIdParam ? Number(sessionIdParam) : null;
-  const groupIdParam = searchParams.get('group_id');
-  const groupId = groupIdParam ? Number(groupIdParam) : null;
+
+  const sessionDeviceIdsRef = useRef<Set<number> | null>(null);
+
+  useMemo(() => {
+    if (!sessionId) return;
+    if (typeof window === 'undefined') return;
+    const stored = sessionStorage.getItem(`session_devices:${sessionId}`);
+    if (stored) {
+      const ids: number[] = JSON.parse(stored);
+      sessionDeviceIdsRef.current = new Set(ids);
+    }
+  }, [sessionId]);
 
   const [playerStatusData, setPlayerStatusData] = useState<PlayerStatusData[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting');
@@ -37,7 +46,7 @@ export function usePlay() {
 
   // Player Status SSE接続
   const initializePlayerStatusConnection = useCallback(async () => {
-    if (!sessionId || !groupId) return;
+    if (!sessionId) return;
     if (status === 'loading') return;
 
     // SSE接続があれば中断する
@@ -55,12 +64,12 @@ export function usePlay() {
     setPlayerStatusData([]);
 
     connectSSE(
-      API_ENDPOINTS.ADMIN.SSE.PLAYER_STATUS(groupId),
+      API_ENDPOINTS.ADMIN.SSE.PLAYER_STATUS(sessionId),
       session?.accessToken || '',
       (parsed) => {
         if (typeof parsed === 'object' && parsed !== null) {
           const data = parsed as PlayerStatusSSEData;
-          if (groupId && data.group_status?.group_id !== groupId) {
+          if (sessionDeviceIdsRef.current && !sessionDeviceIdsRef.current.has(data.device_id)) {
             return;
           }
           // プレイヤーステータスデータを更新
@@ -102,7 +111,7 @@ export function usePlay() {
       },
       abortControllerRef.current.signal
     );
-  }, [sessionId, groupId, status, checkAuth, session?.accessToken]);
+  }, [sessionId, status, checkAuth, session?.accessToken]);
 
   // Phase Progress SSE接続
   const initializePhaseProgressConnection = useCallback(async () => {
@@ -192,7 +201,6 @@ export function usePlay() {
   ).length;
 
   return {
-    groupName,
     currentPhaseData: null,
     isSessionComplete: false,
     handleSessionForceEnd,

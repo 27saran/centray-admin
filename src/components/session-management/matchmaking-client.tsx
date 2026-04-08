@@ -8,15 +8,21 @@ import { Ban } from 'lucide-react';
 import { useMemo } from 'react';
 import { compareByManagementNumber } from '@/lib/sort';
 
-type MatchmakingClientProps = {
-  groupId?: number;
-  groupName?: string;
-};
-
-export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps) {
-  const { matchmakingQueue, statusMessage, connectionStatus, sessionStatus, deleting, removingPlayerId, handleSessionFinish, handleReconnect, handleSessionDelete, handleRemoveFromQueue } = useMatchmaking(groupId);
+export function MatchmakingClient() {
   // マッチメイキング待機は11台以上でも参加可能（運用上、11台目が混ざるケースがある）
   // ただ「セッション開始」は10台までに制限したいので、10を超えたら開始ボタンを無効化する
+  const {
+    matchmakingQueue,
+    statusMessage,
+    connectionStatus,
+    sessionStatus,
+    deleting,
+    removingPlayerId,
+    handleSessionFinish,
+    handleReconnect,
+    handleSessionDelete,
+    handleRemoveFromQueue,
+  } = useMatchmaking();
   const isQueueFull = matchmakingQueue.length > MATCHMAKING_QUEUE_MAX_PLAYERS;
   const sortedQueue = useMemo(
     () => [...matchmakingQueue].sort(compareByManagementNumber),
@@ -26,7 +32,7 @@ export function MatchmakingClient({ groupId, groupName }: MatchmakingClientProps
   return (
     <Card className="w-full">
       <CardContent className="flex flex-col items-center pt-2">
-        <p className="text-lg font-semibold">{groupName ?? (groupId ? `#${groupId}` : '不明なグループ')}</p>
+        <p className="text-lg font-semibold">マッチメイキング</p>
         <p className="text-base mb-2">マッチメイキング中...</p>
         <p className="text-sm text-muted-foreground mb-2">{statusMessage}</p>
         {isQueueFull && (

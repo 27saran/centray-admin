@@ -4,6 +4,14 @@ import { callAuthenticatedApi } from '@/lib/api';
 import { SessionMappingsResponse } from '@/types/session-management';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 
+// セッション作成API
+export async function createSession(): Promise<{ session_id: number } | null> {
+  return callAuthenticatedApi<{ session_id: number }>({
+    method: 'POST',
+    url: API_ENDPOINTS.ADMIN.CREATE_SESSION,
+  });
+}
+
 // 進行中セッション一覧取得API
 export async function loadSessions(): Promise<SessionMappingsResponse> {
   const data = await callAuthenticatedApi<SessionMappingsResponse>({

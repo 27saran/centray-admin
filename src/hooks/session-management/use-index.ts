@@ -1,12 +1,10 @@
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import type { ActiveSession } from '@/types/session-management';
 import { getGameServerInfos } from '@/app/(private)/session-management/fetch';
 
 export function useIndex() {
   const router = useRouter();
-  const [selectedGroup, setSelectedGroup] = useState<string>('');
-
   /**
    * セッション一覧からの詳細クリック時、ゲームサーバ割当の有無を確認して遷移先を変える
    * - 割当あり → プレイ画面へ遷移する
@@ -17,7 +15,6 @@ export function useIndex() {
     const hasAssignment = Array.isArray(infos) && infos.length > 0;
     // クエリパラメータ生成
     const queryString = new URLSearchParams({
-      group_id: String(s.group_id),
       session_id: String(s.session_id),
     }).toString();
 
@@ -48,8 +45,6 @@ export function useIndex() {
   }, []);
 
   return {
-    selectedGroup,
-    setSelectedGroup,
     openSession,
     getAssignedSessionIds,
   };

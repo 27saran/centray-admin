@@ -5,9 +5,8 @@ export type SessionResponse = {
 
 export type ActiveSession = {
   session_id: number;
-  group_id: number;
-  group_name: string;
-  assigned_at: string;
+  name: string;
+  created_at: string;
 };
 
 export type SessionMappingsResponse = {
@@ -15,10 +14,9 @@ export type SessionMappingsResponse = {
 };
 
 export type MatchmakingDataResponse = {
-  session_id: number;
   player_id: number;
   management_number: string;
-  created_at: string;
+  device_id: number;
 };
 
 export type MatchmakingSSEEventResponse = {
@@ -31,6 +29,7 @@ export type MatchedPlayerSession = {
 };
 
 export type SessionFinishResponse = {
+  session_id: number;
   ticket_id: string;
   ticket_status: 'COMPLETED' | 'CANCELLED' | 'FAILED' | 'TIMED_OUT';
   estimated_wait_time?: number;
